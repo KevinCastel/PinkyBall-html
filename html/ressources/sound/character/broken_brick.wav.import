@@ -1,0 +1,21 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/broken_brick.wav-144ad7cdc0bf8f8326b5bb9c08655c9d.sample"
+
+[deps]
+
+source_file="res://ressources/sound/character/broken_brick.wav"
+dest_files=[ "res://.import/broken_brick.wav-144ad7cdc0bf8f8326b5bb9c08655c9d.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop=false
+compress/mode=0

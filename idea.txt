@@ -1,0 +1,8 @@
+Ideas for the final html5:
+	add logo
+	add input customization screen
+	add light (character light) + transition for adding light when switching from platform to character mode,
+								for deleting light when switching from character to platform mode
+	add character uth (jump progress bar, seconde left (all 10 secondes, )
+	add character tearing up to pieces when the character is finished
+	redraw btns for mobile input

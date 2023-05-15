@@ -1,0 +1,101 @@
+Here all commands, in the script every command are redirected to a special method
+
+OTHER:FERVER - Vice City - 09:18-14:50, searching song:['your body,my body';"every body"], "lifstick"-balavoine, 'what if god (want all of us)'
+
+Some commands take arguments, there is two types of arguments:
+	"info_var" is for getting a value and doesn't used prefix
+	"set_var" is for changing value and always used a prefix '--'
+	"action_var" is for making action
+	
+
+
+method help (when a command starts with 'help ')
+		see under this one for each command help
+		
+		'help var' for getting information on how to use argument
+		'help value' for getting type and example of value for argument
+
+method example (use for getting variable example) (did)
+	'example string' (show a string after choosing random element from ["Hello", "Hello my Friend", "3+4=34"])
+	'example bool' (show a all bool values ('true' and 'false'))
+	'example int' (show a random int32 number)
+	'exmaple float' (show random float32 number)
+
+method software(for manipulating the full software) (did)
+	This command can take arguments like:
+		'version' (show the software version)
+		'restart' (restart the software)
+		'--pause:<bool value>' (set the whole software in pause or not)
+	
+
+method spawn (for spawning items when the command start with 'spawn ')
+	This command take multiple arguments as:
+		'--item' (string value): rocket, bullet, plane, bomb, heart, slowball
+
+		'--position' (int value, int value):x,y
+		
+		some items (rocket, bullet) can take also ammo:<int value> (index ammo)
+
+		rocket can take also rc:<bool value> set if the rocket is radio-control
+
+method player (for getting informations on the player) (maximum argument:2
+	This command take multiple argument like:
+		'life' ('info-var' can be used as 'set-var' (int value) also) (show or set the player's life)
+		'position' ('info-var' show the player's position as Vector2D while any gameplay mode)
+		
+		'ammo-bullet' ('info-var' can be used as 'set-var' also) (show or set bullet's ammo of the player)
+		'ammo-rocket' ('info-var' can be used as 'set-var' also) (show rocket's ammo's player)
+		
+		'mode' ('info-var') (show the gameplay mode cannot set the mode)
+
+		'--follow-ball:<bool value>' (set if the player's platform is forced to the global position x of the ball object)
+					Can show a error message if the new value is the same as the actual
+		
+		'name' (string var 'info-var' can be used as 'set-var' too) (show the player name used for this player)
+		
+
+		'weapon' (string var 'info-var' can be used as 'set-var' also) (show the player's weapon) can wait two values:
+			'rocket' (string value)
+			'bullet' (string value)
+
+		'message' (string var 'info-var' can be used as 'set-var' too) (show a message to the player)
+
+		*For the multiplayer, you'll have to specified the player name but here you can get the player's name
+
+method ball
+	This command take arguments:
+		'--pause:<bool value>' (used for setting the ball object in pause or not) can be used with ('--all'):
+			'all':<bool value> set if all balls are paused or just this ball
+		'remove' (remove the ball)
+		'add' (add a ball object)
+		'position' : ('info-var' can be used as 'set-var') get or manipulate the ball global position (can be used with 'name' for a specific ball object)
+		'name' : ('info-var') show the ball object name (can be used with the argument --all too)
+		'speed' ('info-var') show the ball speed name (can be used with the argument --all too)
+			can be used for a single ball object but need the 'name' object as argument
+
+
+method camera (for getting camera information)
+	This command is used for camera:
+		'--mode:<string value>' (used for changing the gameplay mode see argument under)
+			'.gameplay' (set the camera mode as 'gameplay')
+			'.plane' (set the camera mode as 'plane')
+			'.debug' (set the camera mode as 'debug')
+
+
+method server (for getting informations on the server)
+	This command take multiple informations
+		'server.players' (show all players name)
+		'server.shutdown' (shutdown the server)
+		'server.author' (show the server author)
+		'server.restart' (restart the server)
+		'server.expulse' take argument as '--name:<string value>' (name have to be a player name)
+
+commande:
+	export map -> exportation map
+	motors -> get information about the game motors
+	pause -> set the main game in pause mode
+	restart -> restart the software
+	help -> show 'help' command
+	ball collision -> disable/activate the ball command
+	automatic ball -> set the platformer that follow the ball
+

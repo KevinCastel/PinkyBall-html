@@ -1,0 +1,21 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/mixkit-sea-mine-explosion-1184.wav-644694ea7c18fb7ba376773698ca00b8.sample"
+
+[deps]
+
+source_file="res://ressources/sound/mixkit-sea-mine-explosion-1184.wav"
+dest_files=[ "res://.import/mixkit-sea-mine-explosion-1184.wav-644694ea7c18fb7ba376773698ca00b8.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop=false
+compress/mode=0

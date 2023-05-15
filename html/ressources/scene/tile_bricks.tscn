@@ -1,0 +1,240 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://ressources/img/bricks.png" type="Texture" id=1]
+
+[node name="tile_bricks" type="Node2D"]
+
+[node name="sprite_black_brick" type="Sprite" parent="."]
+texture = ExtResource( 1 )
+region_enabled = true
+region_rect = Rect2( 455, 403, 49, 26 )
+
+[node name="sprite_pink_brick" type="Sprite" parent="."]
+texture = ExtResource( 1 )
+region_enabled = true
+region_rect = Rect2( 263, 403, 49, 26 )
+
+[node name="sprite_blue_brick" type="Sprite" parent="."]
+texture = ExtResource( 1 )
+region_enabled = true
+region_rect = Rect2( 199, 403, 49, 26 )
+
+[node name="sprite_green_brick" type="Sprite" parent="."]
+texture = ExtResource( 1 )
+region_enabled = true
+region_rect = Rect2( 391, 403, 49, 26 )
+
+[node name="sprite_yellow_brick" type="Sprite" parent="."]
+texture = ExtResource( 1 )
+region_enabled = true
+region_rect = Rect2( 327, 403, 49, 26 )
+
+[node name="sprite_yellow_plane_brick" type="Sprite" parent="."]
+texture = ExtResource( 1 )
+region_enabled = true
+region_rect = Rect2( 199, 19, 49, 26 )
+
+[node name="sprite_green_plane_brick" type="Sprite" parent="."]
+texture = ExtResource( 1 )
+region_enabled = true
+region_rect = Rect2( 135, 19, 49, 26 )
+
+[node name="sprite_blue_plane_brick" type="Sprite" parent="."]
+texture = ExtResource( 1 )
+region_enabled = true
+region_rect = Rect2( 71, 19, 49, 26 )
+
+[node name="sprite_pink_plane_brick" type="Sprite" parent="."]
+texture = ExtResource( 1 )
+region_enabled = true
+region_rect = Rect2( 263, 19, 49, 26 )
+
+[node name="sprite_blue_coffee_brick" type="Sprite" parent="."]
+texture = ExtResource( 1 )
+region_enabled = true
+region_rect = Rect2( 391, 19, 49, 26 )
+
+[node name="sprite_yellow_coffee_brick" type="Sprite" parent="."]
+texture = ExtResource( 1 )
+region_enabled = true
+region_rect = Rect2( 7, 83, 49, 26 )
+
+[node name="sprite_green_coffee_brick" type="Sprite" parent="."]
+texture = ExtResource( 1 )
+region_enabled = true
+region_rect = Rect2( 455, 19, 49, 26 )
+
+[node name="sprite_pink_coffee_brick" type="Sprite" parent="."]
+texture = ExtResource( 1 )
+region_enabled = true
+region_rect = Rect2( 71, 83, 49, 26 )
+
+[node name="sprite_blue_slowerball_brick" type="Sprite" parent="."]
+texture = ExtResource( 1 )
+region_enabled = true
+region_rect = Rect2( 199, 83, 49, 26 )
+
+[node name="sprite_green_slowerball_brick" type="Sprite" parent="."]
+texture = ExtResource( 1 )
+region_enabled = true
+region_rect = Rect2( 263, 83, 49, 26 )
+
+[node name="sprite_yellow_slowerball_brick" type="Sprite" parent="."]
+texture = ExtResource( 1 )
+region_enabled = true
+region_rect = Rect2( 327, 83, 49, 26 )
+
+[node name="sprite_blue_deadhead_brick" type="Sprite" parent="."]
+texture = ExtResource( 1 )
+region_enabled = true
+region_rect = Rect2( 7, 147, 49, 26 )
+
+[node name="sprite_green_deadhead_brick" type="Sprite" parent="."]
+texture = ExtResource( 1 )
+region_enabled = true
+region_rect = Rect2( 71, 147, 49, 26 )
+
+[node name="sprite_yellow_deadhead_brick" type="Sprite" parent="."]
+texture = ExtResource( 1 )
+region_enabled = true
+region_rect = Rect2( 135, 147, 49, 26 )
+
+[node name="sprite_pink_deadhead_brick" type="Sprite" parent="."]
+texture = ExtResource( 1 )
+region_enabled = true
+region_rect = Rect2( 199, 147, 49, 26 )
+
+[node name="sprite_blue_bomb_brick" type="Sprite" parent="."]
+texture = ExtResource( 1 )
+region_enabled = true
+region_rect = Rect2( 327, 147, 49, 26 )
+
+[node name="sprite_green_bomb_brick" type="Sprite" parent="."]
+texture = ExtResource( 1 )
+region_enabled = true
+region_rect = Rect2( 391, 147, 49, 26 )
+
+[node name="sprite_yellow_bomb_brick" type="Sprite" parent="."]
+texture = ExtResource( 1 )
+region_enabled = true
+region_rect = Rect2( 455, 147, 49, 26 )
+
+[node name="sprite_pink_bomb_brick" type="Sprite" parent="."]
+texture = ExtResource( 1 )
+region_enabled = true
+region_rect = Rect2( 7, 211, 49, 26 )
+
+[node name="sprite_blue_alcohol_brick" type="Sprite" parent="."]
+texture = ExtResource( 1 )
+region_enabled = true
+region_rect = Rect2( 135, 211, 49, 26 )
+
+[node name="sprite_green_alcohol_brick" type="Sprite" parent="."]
+texture = ExtResource( 1 )
+region_enabled = true
+region_rect = Rect2( 199, 211, 49, 26 )
+
+[node name="sprite_yellow_alcohol_brick" type="Sprite" parent="."]
+texture = ExtResource( 1 )
+region_enabled = true
+region_rect = Rect2( 263, 211, 49, 26 )
+
+[node name="sprite_pink_alcohol_brick" type="Sprite" parent="."]
+texture = ExtResource( 1 )
+region_enabled = true
+region_rect = Rect2( 327, 211, 49, 26 )
+
+[node name="sprite_blue_money_brick" type="Sprite" parent="."]
+texture = ExtResource( 1 )
+region_enabled = true
+region_rect = Rect2( 455, 211, 49, 26 )
+
+[node name="sprite_green_money_brick" type="Sprite" parent="."]
+texture = ExtResource( 1 )
+region_enabled = true
+region_rect = Rect2( 7, 275, 49, 26 )
+
+[node name="sprite_yellow_money_brick" type="Sprite" parent="."]
+texture = ExtResource( 1 )
+region_enabled = true
+region_rect = Rect2( 71, 275, 49, 26 )
+
+[node name="sprite_pink_money_brick" type="Sprite" parent="."]
+texture = ExtResource( 1 )
+region_enabled = true
+region_rect = Rect2( 135, 275, 49, 26 )
+
+[node name="sprite_blue_rocket_brick" type="Sprite" parent="."]
+texture = ExtResource( 1 )
+region_enabled = true
+region_rect = Rect2( 199, 275, 49, 26 )
+
+[node name="sprite_green_rocket_brick" type="Sprite" parent="."]
+texture = ExtResource( 1 )
+region_enabled = true
+region_rect = Rect2( 327, 275, 49, 26 )
+
+[node name="sprite_yellow_rocket_brick" type="Sprite" parent="."]
+texture = ExtResource( 1 )
+region_enabled = true
+region_rect = Rect2( 391, 275, 49, 26 )
+
+[node name="sprite_pink_rocket_brick" type="Sprite" parent="."]
+texture = ExtResource( 1 )
+region_enabled = true
+region_rect = Rect2( 455, 275, 49, 26 )
+
+[node name="sprite_yellow_bullet_brick" type="Sprite" parent="."]
+texture = ExtResource( 1 )
+region_enabled = true
+region_rect = Rect2( 135, 339, 49, 26 )
+
+[node name="sprite_green_bullet_brick" type="Sprite" parent="."]
+texture = ExtResource( 1 )
+region_enabled = true
+region_rect = Rect2( 199, 339, 49, 26 )
+
+[node name="sprite_pink_bullet_brick" type="Sprite" parent="."]
+texture = ExtResource( 1 )
+region_enabled = true
+region_rect = Rect2( 263, 339, 49, 26 )
+
+[node name="sprite_blue_heart_brick" type="Sprite" parent="."]
+texture = ExtResource( 1 )
+region_enabled = true
+region_rect = Rect2( 391, 339, 49, 26 )
+
+[node name="sprite_green_heart_brick" type="Sprite" parent="."]
+texture = ExtResource( 1 )
+region_enabled = true
+region_rect = Rect2( 455, 339, 49, 26 )
+
+[node name="sprite_yellow_heart_brick" type="Sprite" parent="."]
+texture = ExtResource( 1 )
+region_enabled = true
+region_rect = Rect2( 7, 403, 49, 26 )
+
+[node name="sprite_pink_heart_brick" type="Sprite" parent="."]
+texture = ExtResource( 1 )
+region_enabled = true
+region_rect = Rect2( 71, 403, 49, 26 )
+
+[node name="sprite_blue_plane_rc" type="Sprite" parent="."]
+texture = ExtResource( 1 )
+region_enabled = true
+region_rect = Rect2( 199, 467, 49, 26 )
+
+[node name="sprite_green_plane_rc" type="Sprite" parent="."]
+texture = ExtResource( 1 )
+region_enabled = true
+region_rect = Rect2( 263, 467, 49, 26 )
+
+[node name="sprite_yellow_plane_rc" type="Sprite" parent="."]
+texture = ExtResource( 1 )
+region_enabled = true
+region_rect = Rect2( 135, 467, 49, 26 )
+
+[node name="sprite_pink_plane_rc" type="Sprite" parent="."]
+texture = ExtResource( 1 )
+region_enabled = true
+region_rect = Rect2( 71, 467, 49, 26 )

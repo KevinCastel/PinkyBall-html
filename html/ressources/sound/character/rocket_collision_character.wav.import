@@ -1,0 +1,23 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/rocket_collision_character.wav-7aa8c38900575f842a680a5a420348c2.sample"
+
+[deps]
+
+source_file="res://ressources/sound/character/rocket_collision_character.wav"
+dest_files=[ "res://.import/rocket_collision_character.wav-7aa8c38900575f842a680a5a420348c2.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=0

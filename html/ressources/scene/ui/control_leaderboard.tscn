@@ -1,0 +1,92 @@
+[gd_scene load_steps=8 format=2]
+
+[ext_resource path="res://ressources/fonts/rage_italic.TTF" type="DynamicFontData" id=1]
+[ext_resource path="res://ressources/theme/ui_menu.tres" type="Theme" id=2]
+[ext_resource path="res://ressources/theme/ui_btn.tres" type="Theme" id=3]
+[ext_resource path="res://ressources/script/ui/control_leaderboard.gd" type="Script" id=4]
+[ext_resource path="res://ressources/scene/ui/ScoreItem.tscn" type="PackedScene" id=5]
+
+[sub_resource type="DynamicFont" id=1]
+size = 100
+use_filter = true
+font_data = ExtResource( 1 )
+
+[sub_resource type="Theme" id=2]
+Label/colors/font_color = Color( 0.847059, 0.141176, 0.486275, 1 )
+Label/fonts/font = SubResource( 1 )
+
+[node name="control_leaderboard" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource( 4 )
+
+[node name="label_title" type="Label" parent="."]
+anchor_right = 1.0
+margin_bottom = 14.0
+theme = SubResource( 2 )
+text = "Leaderboard"
+align = 1
+valign = 1
+
+[node name="panel_leaderboard" type="Panel" parent="."]
+anchor_top = 0.218
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_top = 0.199994
+theme = ExtResource( 2 )
+
+[node name="label_information" type="Label" parent="panel_leaderboard"]
+anchor_top = 0.825
+anchor_right = 0.887
+anchor_bottom = 1.0
+margin_top = 0.0749776
+margin_right = -0.287994
+text = "Information"
+
+[node name="Node2D" type="Node2D" parent="panel_leaderboard"]
+
+[node name="ScrollContainer" type="ScrollContainer" parent="panel_leaderboard/Node2D"]
+margin_right = 1024.0
+margin_bottom = 390.0
+theme = ExtResource( 2 )
+scroll_horizontal_enabled = false
+
+[node name="ScoreItemContainer" type="VBoxContainer" parent="panel_leaderboard/Node2D/ScrollContainer"]
+margin_right = 1024.0
+margin_bottom = 400.0
+rect_min_size = Vector2( 500, 400 )
+rect_clip_content = true
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="ScoreItem" parent="panel_leaderboard/Node2D/ScrollContainer/ScoreItemContainer" instance=ExtResource( 5 )]
+visible = false
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_right = 1024.0
+margin_bottom = 0.0
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 11.47
+
+[node name="ScoreItem2" parent="panel_leaderboard/Node2D/ScrollContainer/ScoreItemContainer" instance=ExtResource( 5 )]
+visible = false
+anchor_right = 0.0
+anchor_bottom = 0.0
+margin_right = 1024.0
+margin_bottom = 400.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="btn_close" type="Button" parent="."]
+anchor_left = 0.9
+anchor_top = 0.927
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 0.399963
+margin_top = -0.200027
+theme = ExtResource( 3 )
+text = "Close"
+
+[node name="audiostreamplayer_effect" type="AudioStreamPlayer" parent="."]
+
+[connection signal="pressed" from="btn_close" to="." method="_on_btn_close_pressed"]

@@ -1,0 +1,21 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/plane_run8bit.wav-e857f75d7218babe7b40da597d0cf161.sample"
+
+[deps]
+
+source_file="res://ressources/sound/vehicle/8bit/plane_run8bit.wav"
+dest_files=[ "res://.import/plane_run8bit.wav-e857f75d7218babe7b40da597d0cf161.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=true
+edit/loop=true
+compress/mode=0

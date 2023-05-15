@@ -1,0 +1,27 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://ressources/img/items.png" type="Texture" id=1]
+[ext_resource path="res://ressources/script/items/cofee.gd" type="Script" id=2]
+
+[node name="coffee" type="RigidBody2D"]
+collision_layer = 4
+collision_mask = 63
+mass = 0.346939
+contacts_reported = 4
+contact_monitor = true
+can_sleep = false
+script = ExtResource( 2 )
+
+[node name="sprite" type="Sprite" parent="."]
+texture = ExtResource( 1 )
+region_enabled = true
+region_rect = Rect2( 22, 22, 20, 19 )
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
+position = Vector2( 0, -0.578116 )
+polygon = PoolVector2Array( -10.0428, -9.45595, 6.00149, -9.45595, 6, -4.51563, 9.01349, -4.47532, 9.01563, -3.5, 9.96327, -3.5, 9.99219, 1.50781, 8.99219, 1.50781, 9.00781, 2.5, 6.00041, 2.48438, 6.00822, 7.51531, 5.00041, 7.5075, 4.99259, 8.5075, 2.9855, 8.49969, 3.00893, 9.51531, -7.01343, 9.5075, -7.00562, 8.49188, -9.01343, 8.5075, -8.98999, 6.5075, -9.9978, 6.5075 )
+
+[node name="sound" type="Node2D" parent="."]
+
+[connection signal="body_entered" from="." to="." method="_on_coffee_body_entered"]
+[connection signal="body_shape_entered" from="." to="." method="_on_coffee_body_shape_entered"]

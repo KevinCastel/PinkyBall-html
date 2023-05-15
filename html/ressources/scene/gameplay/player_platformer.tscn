@@ -1,0 +1,66 @@
+[gd_scene load_steps=7 format=2]
+
+[ext_resource path="res://ressources/img/platforms.png" type="Texture" id=1]
+[ext_resource path="res://ressources/script/gameplay/player_platformer.gd" type="Script" id=2]
+[ext_resource path="res://ressources/img/ball.png" type="Texture" id=3]
+[ext_resource path="res://ressources/img/ui/progrbar_progress_platform1.png" type="Texture" id=4]
+
+[sub_resource type="RectangleShape2D" id=1]
+extents = Vector2( 25, 9 )
+
+[sub_resource type="RectangleShape2D" id=2]
+extents = Vector2( 25, 24.5 )
+
+[node name="player" type="KinematicBody2D"]
+collision_layer = 2
+collision_mask = 29
+script = ExtResource( 2 )
+
+[node name="body" type="Sprite" parent="."]
+texture = ExtResource( 1 )
+hframes = 2
+vframes = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource( 1 )
+
+[node name="position2D_ball" type="Position2D" parent="."]
+position = Vector2( 0, -17 )
+
+[node name="sprite" type="Sprite" parent="position2D_ball"]
+texture = ExtResource( 3 )
+region_enabled = true
+region_rect = Rect2( 23, 24, 16, 16 )
+
+[node name="raycast2D_items" type="RayCast2D" parent="."]
+position = Vector2( 0, 5 )
+rotation = 3.14159
+scale = Vector2( 20, 0.4 )
+enabled = true
+collision_mask = 4
+collide_with_areas = true
+
+[node name="texture_progress" type="TextureProgress" parent="."]
+margin_left = -32.0
+margin_top = -32.0
+margin_right = 32.0
+margin_bottom = 32.0
+texture_under = ExtResource( 4 )
+texture_progress = ExtResource( 4 )
+tint_under = Color( 1, 1, 1, 0.0862745 )
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="area2D_ball" type="Area2D" parent="."]
+collision_layer = 8192
+collision_mask = 524
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="area2D_ball"]
+position = Vector2( 0, -33.5 )
+shape = SubResource( 2 )
+
+[node name="sound" type="Node2D" parent="."]
+
+[connection signal="body_entered" from="area2D_ball" to="." method="_on_area2D_ball_body_entered"]
+[connection signal="body_exited" from="area2D_ball" to="." method="_on_area2D_ball_body_exited"]

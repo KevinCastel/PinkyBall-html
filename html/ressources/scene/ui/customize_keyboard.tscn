@@ -1,0 +1,53 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://ressources/theme/ui_menu.tres" type="Theme" id=1]
+[ext_resource path="res://ressources/fonts/rage_italic.TTF" type="DynamicFontData" id=2]
+[ext_resource path="res://ressources/script/ui/customize_keyboard.gd" type="Script" id=3]
+[ext_resource path="res://ressources/theme/ui_btn.tres" type="Theme" id=4]
+
+[sub_resource type="DynamicFont" id=1]
+size = 100
+font_data = ExtResource( 2 )
+
+[node name="customize_keyboard" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource( 3 )
+
+[node name="ColorRect" type="ColorRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color( 0.0705882, 0, 0.294118, 1 )
+
+[node name="label_title" type="Label" parent="ColorRect"]
+anchor_right = 1.0
+anchor_bottom = 0.192
+margin_bottom = -0.200001
+theme = ExtResource( 1 )
+custom_fonts/font = SubResource( 1 )
+text = "Change Your Keys:"
+
+[node name="label_key_text" type="Label" parent="ColorRect"]
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.595
+margin_top = -7.0
+margin_bottom = -50.0
+theme = ExtResource( 1 )
+custom_colors/font_color = Color( 1, 0, 0.94902, 1 )
+text = "Press Key (cursor uppper than this text)"
+align = 1
+
+[node name="btn_apply" type="Button" parent="ColorRect"]
+anchor_left = 0.848
+anchor_top = 0.903
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -0.352051
+margin_top = 0.199966
+theme = ExtResource( 4 )
+text = "Apply"
+
+[node name="audiostreamplayer_effect" type="AudioStreamPlayer" parent="."]
+
+[connection signal="pressed" from="ColorRect/btn_apply" to="." method="_on_btn_apply_pressed"]

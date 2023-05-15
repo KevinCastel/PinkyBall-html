@@ -1,0 +1,15 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+path="res://.import/bullet_falling_character_mp3..mp3-61526d848004155c10babe4b4151e9d6.mp3str"
+
+[deps]
+
+source_file="res://ressources/sound/character/bullet_falling_character_mp3..mp3"
+dest_files=[ "res://.import/bullet_falling_character_mp3..mp3-61526d848004155c10babe4b4151e9d6.mp3str" ]
+
+[params]
+
+loop=true
+loop_offset=0

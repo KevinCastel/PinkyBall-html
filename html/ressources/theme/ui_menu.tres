@@ -1,0 +1,41 @@
+[gd_resource type="Theme" load_steps=10 format=2]
+
+[ext_resource path="res://ressources/fonts/rage_italic.TTF" type="DynamicFontData" id=1]
+[ext_resource path="res://ressources/fonts/ebrima.ttf" type="DynamicFontData" id=2]
+
+[sub_resource type="DynamicFont" id=6]
+size = 20
+use_mipmaps = true
+use_filter = true
+font_data = ExtResource( 2 )
+
+[sub_resource type="StyleBoxFlat" id=5]
+bg_color = Color( 0.6, 0.6, 0.6, 0 )
+
+[sub_resource type="StyleBoxFlat" id=10]
+bg_color = Color( 0.960784, 0, 1, 0.643137 )
+
+[sub_resource type="DynamicFont" id=9]
+size = 22
+font_data = ExtResource( 2 )
+
+[sub_resource type="DynamicFont" id=7]
+size = 50
+font_data = ExtResource( 1 )
+
+[sub_resource type="StyleBoxFlat" id=8]
+bg_color = Color( 0.6, 0.6, 0.6, 0.0980392 )
+
+[sub_resource type="StyleBoxFlat" id=11]
+bg_color = Color( 0.968627, 0, 1, 1 )
+
+[resource]
+Button/colors/font_color = Color( 0.454902, 0.854902, 0.160784, 1 )
+Button/fonts/font = SubResource( 6 )
+Button/styles/normal = SubResource( 5 )
+Button/styles/pressed = SubResource( 10 )
+CheckBox/fonts/font = SubResource( 9 )
+Label/colors/font_color = Color( 0.164706, 0.666667, 0.933333, 1 )
+Label/fonts/font = SubResource( 7 )
+Panel/styles/panel = SubResource( 8 )
+VScrollBar/styles/scroll = SubResource( 11 )

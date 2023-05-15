@@ -1,0 +1,15 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+path="res://.import/song_pinkyball.mp3-7a50eb7e41162f28b3577f63fd141ab3.mp3str"
+
+[deps]
+
+source_file="res://ressources/sound/menu/song_pinkyball.mp3"
+dest_files=[ "res://.import/song_pinkyball.mp3-7a50eb7e41162f28b3577f63fd141ab3.mp3str" ]
+
+[params]
+
+loop=true
+loop_offset=0

@@ -1,0 +1,15 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+path="res://.import/run.mp3-f2d906dd6c622fe780d29e33e7e6bd5a.mp3str"
+
+[deps]
+
+source_file="res://ressources/sound/character/jp/run.mp3"
+dest_files=[ "res://.import/run.mp3-f2d906dd6c622fe780d29e33e7e6bd5a.mp3str" ]
+
+[params]
+
+loop=false
+loop_offset=0

@@ -1,0 +1,4 @@
+Récupèrer toutes les distances entre chacuns des items et de la player's platform
+Tris les distances afin d'en récupérer l'item le plus proche
+Vérifis si l'item est en train de tomber
+Téléporte la platforme à l'x de l'item en train de tomber

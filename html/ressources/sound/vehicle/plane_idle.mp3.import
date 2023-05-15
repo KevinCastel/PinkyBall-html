@@ -1,0 +1,15 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+path="res://.import/plane_idle.mp3-f6078cd5772194e2f5edcb1b8f78a558.mp3str"
+
+[deps]
+
+source_file="res://ressources/sound/vehicle/plane_idle.mp3"
+dest_files=[ "res://.import/plane_idle.mp3-f6078cd5772194e2f5edcb1b8f78a558.mp3str" ]
+
+[params]
+
+loop=true
+loop_offset=0

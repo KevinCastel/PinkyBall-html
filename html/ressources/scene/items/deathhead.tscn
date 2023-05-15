@@ -1,0 +1,16 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://ressources/img/items.png" type="Texture" id=1]
+
+[node name="deathhead" type="RigidBody2D"]
+collision_layer = 4
+collision_mask = 507
+
+[node name="Sprite" type="Sprite" parent="."]
+texture = ExtResource( 1 )
+region_enabled = true
+region_rect = Rect2( 18, 78, 28, 36 )
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
+visible = false
+polygon = PoolVector2Array( -4.10203, 17.955, -10.0602, 11.9378, -10, 7.21875, -11.0313, 5.96875, -12.0625, 4.96875, -12, 2, -14.0313, -0.0625, -14.0376, -12.0044, -12.9502, -14.074, -10.9158, -14.986, -8.95146, -15.9681, -4.95269, -17.9324, 3.99193, -18.0377, 6.02639, -17.0555, 8.93778, -16.0383, 13.0067, -14.0038, 13.9889, -12.0044, 13.9889, -1.06042, 13.0418, -0.052511, 12.0245, 1.06995, 11.9895, 4.99857, 10.1304, 7.03303, 9.99009, 11.9438, 3.99193, 17.977 )

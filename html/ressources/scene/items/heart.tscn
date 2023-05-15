@@ -1,0 +1,58 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://ressources/img/items.png" type="Texture" id=1]
+[ext_resource path="res://ressources/scene/items/heart.gd" type="Script" id=2]
+[ext_resource path="res://ressources/sound/heart_beat.wav" type="AudioStream" id=3]
+
+[sub_resource type="Animation" id=1]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath("sprite:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ 10 ]
+}
+
+[sub_resource type="Animation" id=2]
+resource_name = "beat"
+length = 0.3
+loop = true
+tracks/0/type = "value"
+tracks/0/path = NodePath("sprite:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.1, 0.2 ),
+"transitions": PoolRealArray( 1, 1, 1 ),
+"update": 1,
+"values": [ 10, 11, 12 ]
+}
+
+[node name="heart" type="RigidBody2D"]
+collision_layer = 4
+collision_mask = 63
+script = ExtResource( 2 )
+
+[node name="sprite" type="Sprite" parent="."]
+texture = ExtResource( 1 )
+hframes = 4
+vframes = 4
+frame = 10
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
+polygon = PoolVector2Array( -0.931796, 15.0028, -7.03125, 11.9219, -8.07942, 10.9035, -10.0625, 10.0313, -12.0625, 7.90625, -13.0313, 6.03125, -13.9688, 3.8125, -15, 0.9375, -16.0565, -3.07531, -16.0294, -8.03243, -13.9596, -10.0625, -13.0094, -12.0512, -11.962, -12.9987, -9.98017, -13.9809, -7.99833, -14.9806, -2.03525, -14.9981, -0.125, -14.0313, 1.03125, -13.0313, 2.96875, -11.0313, 3.95741, -9.01247, 4.98751, -6.06137, 5.96193, -4.08469, 6.96419, 0.00787705, 8.02213, 2.90949, 9.0244, 4.94185, 9.97098, 6.05548, 9.91529, 7.89296, 9.05224, 9.981, 8.02213, 12.0505, 7.01987, 13.0806, 6.01761, 13.9715, 4.01309, 14.9738 )
+
+[node name="anim" type="AnimationPlayer" parent="."]
+anims/RESET = SubResource( 1 )
+anims/beat = SubResource( 2 )
+
+[node name="audio_stream_player2D_beat" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource( 3 )

@@ -1,0 +1,21 @@
+control:
+	m:change the direction while piloting the plane
+
+	ctrl:fire while piloting the plane
+
+	up arrow: launch the ball
+		    throw-up acceration while piloting the plane
+
+	down arrow: throw-down acceleration while piloting the plane
+
+	right arrow: accelerate to the right the platform
+			 can also serve as breack
+			 turn right the plane while piloting
+			moving player character to the right
+	
+	left arrow: accelerate to the left the platform
+			can also serve as breack
+			turn left the plane while piloting
+			moving player character to the left
+	
+	l:make spawn the player character while piloting

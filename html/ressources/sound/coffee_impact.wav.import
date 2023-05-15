@@ -1,0 +1,21 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/coffee_impact.wav-07c7bc84ebe77c5da7e4dcadb2e48ed9.sample"
+
+[deps]
+
+source_file="res://ressources/sound/coffee_impact.wav"
+dest_files=[ "res://.import/coffee_impact.wav-07c7bc84ebe77c5da7e4dcadb2e48ed9.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop=false
+compress/mode=0

@@ -1,0 +1,39 @@
+[gd_scene load_steps=4 format=2]
+
+[ext_resource path="res://ressources/img/items.png" type="Texture" id=1]
+[ext_resource path="res://ressources/script/ammu/bullet.gd" type="Script" id=2]
+[ext_resource path="res://ressources/img/item_progbar/bullet/bullet_progbar.png" type="Texture" id=3]
+
+[node name="bullet" type="RigidBody2D"]
+collision_layer = 512
+collision_mask = 19
+script = ExtResource( 2 )
+
+[node name="sprite" type="Sprite" parent="."]
+texture = ExtResource( 1 )
+region_enabled = true
+region_rect = Rect2( 153, 21, 14, 22 )
+
+[node name="CollisionShape2D" type="CollisionPolygon2D" parent="."]
+polygon = PoolVector2Array( -6.9948, 9.99117, -6.98438, -6.02344, -4, -9.03125, -2.01563, -10, -0.992188, -11.0078, 0.992188, -11.0156, 1.99219, -10, 3.98438, -8.98438, 6.99219, -5.99219, 7.02344, 9.99219, 6, 10.9922, -5.99367, 11.0132 )
+
+[node name="raycast2D_destroy" type="RayCast2D" parent="."]
+position = Vector2( -0.0834274, 1.83089 )
+rotation = 3.14159
+scale = Vector2( 1, 0.3 )
+enabled = true
+collision_mask = 53
+
+[node name="texture_progress" type="TextureProgress" parent="."]
+margin_left = -31.875
+margin_top = -32.125
+margin_right = 32.125
+margin_bottom = 31.875
+value = 80.0
+texture_under = ExtResource( 3 )
+texture_progress = ExtResource( 3 )
+fill_mode = 3
+tint_under = Color( 1, 1, 1, 0 )
+__meta__ = {
+"_edit_use_anchors_": false
+}

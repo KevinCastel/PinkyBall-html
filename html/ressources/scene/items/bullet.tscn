@@ -1,0 +1,42 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://ressources/img/items.png" type="Texture" id=1]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends \"res://ressources/script/items/item_object.gd\"
+
+func _on_bullet_body_entered(_body):
+	self.create_audio_stream_playerD(\"collision_bullet\", self.get_audio_pitch(\"bullet\"), self.get_sound_volume(\"bullet\"))
+
+func _on_bullet_body_shape_entered(_body_rid, _body, _body_shape_index, _local_shape_index):
+	self.create_audio_stream_playerD(\"collision_bullet\", self.get_audio_pitch(\"bullet\"), self.get_sound_volume(\"bullet\"))
+"
+
+[node name="bullet" type="RigidBody2D"]
+collision_layer = 4
+collision_mask = 123
+can_sleep = false
+script = SubResource( 1 )
+
+[node name="sprite" type="Sprite" parent="."]
+texture = ExtResource( 1 )
+hframes = 4
+vframes = 4
+frame = 7
+region_rect = Rect2( 215, 81, 17, 30 )
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
+position = Vector2( -0.392969, 0.341629 )
+polygon = PoolVector2Array( -8.13271, 14.6598, -8.0996, -12.3305, -4.0604, -14.3501, -1.08066, -15.3764, 1.86598, -15.3764, 4.87882, -14.3832, 8.85181, -12.2974, 8.91803, 14.6598 )
+
+[node name="raycast2D" type="RayCast2D" parent="."]
+position = Vector2( -0.0787451, -8.7732 )
+rotation = 3.14159
+scale = Vector2( 1.5, 0.2 )
+collision_mask = 48
+collide_with_areas = true
+
+[node name="sound" type="Node2D" parent="."]
+
+[connection signal="body_entered" from="." to="." method="_on_bullet_body_entered"]
+[connection signal="body_shape_entered" from="." to="." method="_on_bullet_body_shape_entered"]

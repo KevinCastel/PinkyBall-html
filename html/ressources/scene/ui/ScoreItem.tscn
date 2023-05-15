@@ -1,0 +1,32 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://ressources/theme/ui_menu.tres" type="Theme" id=1]
+
+[node name="ScoreItem" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_bottom = -525.0
+
+[node name="panel_score_item" type="Panel" parent="."]
+anchor_right = 1.0
+
+[node name="VBoxContainer" type="HBoxContainer" parent="panel_score_item"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="label_username" type="Label" parent="panel_score_item/VBoxContainer"]
+margin_right = 510.0
+margin_bottom = 64.0
+size_flags_horizontal = 3
+size_flags_vertical = 6
+theme = ExtResource( 1 )
+text = "HEllo here is my name"
+
+[node name="label_score" type="Label" parent="panel_score_item/VBoxContainer"]
+margin_left = 514.0
+margin_right = 1024.0
+margin_bottom = 64.0
+size_flags_horizontal = 3
+size_flags_vertical = 6
+theme = ExtResource( 1 )
+text = "My Score Is The Best"

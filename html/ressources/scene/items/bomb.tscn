@@ -1,0 +1,41 @@
+[gd_scene load_steps=6 format=2]
+
+[ext_resource path="res://ressources/img/items.png" type="Texture" id=1]
+[ext_resource path="res://ressources/script/items/bomb.gd" type="Script" id=2]
+[ext_resource path="res://ressources/img/item_progbar/bomb/bomb_progressbar.png" type="Texture" id=3]
+[ext_resource path="res://ressources/img/item_progbar/bomb/bomb_progress_bar_bg.png" type="Texture" id=4]
+
+[sub_resource type="CircleShape2D" id=1]
+radius = 10.3589
+
+[node name="bomb" type="RigidBody2D"]
+collision_layer = 4
+collision_mask = 763
+can_sleep = false
+script = ExtResource( 2 )
+
+[node name="sprite" type="Sprite" parent="."]
+texture = ExtResource( 1 )
+region_enabled = true
+region_rect = Rect2( 85, 19, 21, 26 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2( -0.5, 2.596 )
+shape = SubResource( 1 )
+
+[node name="texture_progress" type="TextureProgress" parent="."]
+margin_left = -32.443
+margin_top = -32.2855
+margin_right = 31.557
+margin_bottom = 31.7145
+texture_under = ExtResource( 4 )
+texture_progress = ExtResource( 3 )
+fill_mode = 3
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="sound" type="Node2D" parent="."]
+
+[connection signal="body_entered" from="." to="." method="_on_bomb_body_entered"]
+[connection signal="body_shape_entered" from="." to="." method="_on_bomb_body_shape_entered"]

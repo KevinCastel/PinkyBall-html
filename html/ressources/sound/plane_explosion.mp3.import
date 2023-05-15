@@ -1,0 +1,15 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+path="res://.import/plane_explosion.mp3-b331bc633ebe5e21f19eed574e0c15e8.mp3str"
+
+[deps]
+
+source_file="res://ressources/sound/plane_explosion.mp3"
+dest_files=[ "res://.import/plane_explosion.mp3-b331bc633ebe5e21f19eed574e0c15e8.mp3str" ]
+
+[params]
+
+loop=false
+loop_offset=0

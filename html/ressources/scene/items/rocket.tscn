@@ -1,0 +1,56 @@
+[gd_scene load_steps=7 format=2]
+
+[ext_resource path="res://ressources/img/items.png" type="Texture" id=1]
+[ext_resource path="res://ressources/script/items/rocket.gd" type="Script" id=2]
+[ext_resource path="res://ressources/img/item_progbar/rocket/rocket_progressbarV.png" type="Texture" id=3]
+[ext_resource path="res://ressources/img/item_progbar/rocket/rocket_progressbar_bg.png" type="Texture" id=4]
+[ext_resource path="res://ressources/sound/loading_loop.wav" type="AudioStream" id=5]
+[ext_resource path="res://ressources/sound/turbine.wav" type="AudioStream" id=6]
+
+[node name="rocket" type="RigidBody2D"]
+rotation = -1.5708
+collision_layer = 4
+collision_mask = 63
+can_sleep = false
+script = ExtResource( 2 )
+
+[node name="texture_progress" type="TextureProgress" parent="."]
+margin_left = 31.5497
+margin_top = -31.7479
+margin_right = 95.5497
+margin_bottom = 32.2521
+rect_rotation = 90.0
+texture_under = ExtResource( 4 )
+texture_progress = ExtResource( 3 )
+fill_mode = 3
+__meta__ = {
+"_edit_use_anchors_": false
+}
+
+[node name="sprite" type="Sprite" parent="."]
+rotation = 1.5708
+texture = ExtResource( 1 )
+region_enabled = true
+region_rect = Rect2( 15, 145, 33, 30 )
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
+rotation = 1.5708
+polygon = PoolVector2Array( -16.5273, 14.0759, -8.4911, 13.9766, -8.4663, 15.068, 8.50196, 15.0126, 8.46789, 13.9798, 16.5391, 14.0156, 16.4688, 10.9531, 15.5602, 9.97672, 14.5023, 7.97219, 8.48873, 1.93079, 8.52874, -11.0096, 6.47008, -12.9938, 4.53543, -14.0108, 1.48465, -14.9781, -1.5314, -14.9285, -4.55738, -14.0356, -6.49202, -13.0186, -7.50895, -11.9521, -8.47628, -11.0344, -8.5, 2.01563, -13.5313, 6.98438, -13.5078, 8.05469, -16.5025, 11.0182 )
+
+[node name="raycast2D_explosion" type="RayCast2D" parent="."]
+rotation = -1.5708
+scale = Vector2( 2, 0.4 )
+enabled = true
+collision_mask = 289
+collide_with_areas = true
+
+[node name="audiostreamplayer2D_load" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource( 5 )
+
+[node name="audiostreamplayer2D_motor" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource( 6 )
+
+[node name="sound" type="Node2D" parent="."]
+
+[connection signal="body_entered" from="." to="." method="_on_rocket_body_entered"]
+[connection signal="body_shape_entered" from="." to="." method="_on_rocket_body_shape_entered"]
