@@ -65,7 +65,7 @@ current = true
 script = ExtResource( 3 )
 
 [node name="player" parent="." instance=ExtResource( 5 )]
-position = Vector2( 134, 844 )
+position = Vector2( 200, 844 )
 
 [node name="bricks" type="Node2D" parent="."]
 
