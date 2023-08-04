@@ -109,6 +109,7 @@ func spawn_platform_player():
 		is already added this one is used for now to place platform
 		player at the start of the game
 	"""
+	"""
 	var spawn_global_pos = Vector2.ZERO
 	var screen_size = OS.window_size
 	
@@ -116,6 +117,9 @@ func spawn_platform_player():
 	spawn_global_pos.y = 844
 	
 	self._player_object_platform.global_position = spawn_global_pos
+	"""
+	self._player_object_platform.global_position.x = 500
+
 
 
 func _physics_process(delta):
