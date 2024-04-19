@@ -11,6 +11,9 @@ var _brick_destroyed = 0
 onready var raycast2D_destroy = self.get_node("raycast2D_destroy")
 
 onready var texture_progress = self.get_node("texture_progress")
+
+onready var _gameplay = self.get_parent().get_parent()
+
 var _chrono_destroy = 30.00
 
 func spawn(global_pos):
@@ -34,8 +37,8 @@ func set_colur(new_colur):
 
 func _physics_process(_delta):
 	"""mainruntime of the application"""
-	self.sleeping = self.get_parent().get_parent()._pause
-	if self.get_parent().get_parent()._pause:
+	self.sleeping = self._gameplay._pause
+	if self.sleeping:
 		return
 	
 	if self._can_execute_runtime:
@@ -54,18 +57,16 @@ func _physics_process(_delta):
 
 func set_acceleration():
 	"""set the acceleration"""
-	self._acceleration = min((self._acceleration+0.2)*(1+self._acceleration/20), 0.70)
+	var ACCELERATION_MINIMUM = 0.2
+	self._acceleration = min((self._acceleration+ACCELERATION_MINIMUM)*(1+self._acceleration/20), 0.70)
 
 func destroy():
 	"""called when the object have to explose"""
-	var coll_object
-	var game_node = self.find_parent("game") #get_parent()x2
-	var weapon_name_player = game_node.find_node("player")._weapon
+#	var game_node = self.find_parent("game") #get_parent()x2
 	if self.raycast2D_destroy.is_colliding():
-		coll_object = self.raycast2D_destroy.get_collider()
+		var coll_object = self.raycast2D_destroy.get_collider()
 		if "brick" in coll_object.name:
-#			game_node.stats_object.add_ammo_brick_broken(weapon_name_player)
-			game_node.stats_object.add_ammo_brick_broken("bullet")
+			self._gameplay.stats_object.add_ammo_brick_broken("bullet")
 			coll_object.on_impact()
 			coll_object.destroy_object()
 			self._brick_destroyed += 1
@@ -74,19 +75,17 @@ func destroy():
 			coll_object.on_bullet_collision()
 			self.queue_free()
 	
-		if not self.check_if_the_ball_can_destroyed(["ball", "brick", "wall"],
-												coll_object.name):
+		if not self.check_if_the_ball_can_destroyed(["ball", "brick", "wall"]):
 			if self._brick_destroyed > 1:
-				game_node.show_message("One Bullet, "+self._brick_destroyed+" Bricks Destroyed")
+				self._gameplay.show_message("One Bullet, "+self._brick_destroyed+" Bricks Destroyed")
 			else:
-				game_node.show_message("One Bullet, A Brick Destroyed")
+				self._gameplay.show_message("One Bullet, A Brick Destroyed")
 			self.queue_free()
 	else:
 		if self._brick_destroyed > 1:
-			game_node.add_message("One Bullet, "+str(self._brick_destroyed)+" Bricks Destroyed")
-			#parent.show_message("One Bullet, "+str(self._brick_destroyed)+" Bricks Destroyed")
+			self._gameplay.add_message("One Bullet, "+str(self._brick_destroyed)+" Bricks Destroyed")
 		else:
-			game_node.add_message("One Bullet, A Brick Destroyed")
+			self._gameplay.add_message("One Bullet, A Brick Destroyed")
 		self.queue_free()
 
 func get_collider_name(list_strings_model:Array, string_to_find:String):
@@ -104,14 +103,14 @@ func get_collider_name(list_strings_model:Array, string_to_find:String):
 			list_strings_model:Array
 			string_to_find:String
 	"""
-	var string_to_return = ""
+	var collider_name = ""
 	for string_model in list_strings_model:
 		if string_model in string_to_find:
-			string_to_return = string_model
+			collider_name = string_model
 	
-	return string_to_return
+	return collider_name
 
-func check_if_the_ball_can_destroyed(list_items:Array, coll_name:String):
+func check_if_the_ball_can_destroyed(list_items:Array):
 	"""return if the item name allows the ball to destroy"""
 	var can_be_destroyed = false
 	for s in list_items:

@@ -202,7 +202,7 @@ func new_key_valided():
 
 
 func get_btn_object_by_his_text(btn_txt:String):
-	var btn_object; var btn_child
+	var btn_child
 	for panel_object in self.get_node("ColorRect/VBoxContainer/control_keys_keysboard/vboxcontainers").get_children():
 		btn_child = panel_object.get_node("HBoxContainer/button_change_keys")
 		if btn_child.text == btn_txt:

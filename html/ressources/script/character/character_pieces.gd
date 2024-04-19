@@ -31,7 +31,7 @@ func spawn(global_pos, linear_vel):
 	self.linear_velocity = linear_vel
 
 
-func _process(delta):
+func _process(_delta):
 	"""
 		Main runtime for this object
 		(used for visual effect)

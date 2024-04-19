@@ -8,6 +8,7 @@ var _acceleration = 0
 var _fuel = 100
 
 onready var texture_progress_fuel = self.get_node("texture_progress")
+onready var _gameplay = self.get_parent().get_parent()
 
 var _is_explosed = false
 
@@ -32,8 +33,6 @@ func spawn(global_pos, is_rc = false):
 
 func set_cam_for_rc():
 	"""create camera object"""
-	var parent = self.get_parent().get_parent()
-	
 	self._cam_object = Camera2D.new()
 	
 	self._cam_object.current = true
@@ -42,8 +41,8 @@ func set_cam_for_rc():
 	
 	self.add_child(self._cam_object)
 	
-	parent.set_gameplay_mode("rocket")
-	parent.manage_camera("rocket", self._cam_object)
+	self._gameplay.set_gameplay_mode("rocket")
+	self._gameplay.manage_camera("rocket", self._cam_object)
 
 func _physics_process(delta):
 	"""mainruntime of this object"""
@@ -58,7 +57,7 @@ func _physics_process(delta):
 	self.apply_impulse(Vector2.ZERO, self._vel)
 	
 	
-	self._fuel = lerp(self._fuel, 0.00, 0.002+(self._acceleration/100000))
+	self._fuel = lerp(self._fuel, 0.00, 0.002+(self._acceleration/100000)) #positive due to the progress bar value
 
 	self.texture_progress_fuel.value = int(self._fuel)+30
 	
@@ -146,10 +145,9 @@ func is_colliding():
 		self.explosion()
 
 func explosion():
-	var parent = self.get_parent().get_parent()
-	parent.manage_explosion(self.global_position, "rocket")
-	parent.set_gameplay_mode("platform")
-	parent.manage_camera("gameplay")
+	self._gameplay.manage_explosion(self.global_position, "rocket")
+	self._gameplay.set_gameplay_mode("platform")
+	self._gameplay.manage_camera("gameplay")
 	
 	self.queue_free()
 
@@ -172,9 +170,3 @@ func play_sound():
 	if not audiostreamplayer2D_motor.is_playing():
 		audiostreamplayer2D_motor.play()
 
-
-#func on_explosion_collision():
-#	"""
-#		Called when this object collide with an explosion object
-#	"""
-#	self.explosion()

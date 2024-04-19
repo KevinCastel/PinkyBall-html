@@ -82,7 +82,7 @@ func global_time_game(convert_result_to_string=false):
 	return global_time
 
 func convert_second_to_minutes(second:int):
-	return second/60
+	return int(second/60)
 
 func check_if_time_can_be_converted_in_minutes(second:int):
 	"""

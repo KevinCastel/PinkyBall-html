@@ -12,16 +12,15 @@ var _move_cam_menu = false
 
 var _player_name = "user"
 
-var _is_having_touchpad = OS.has_touchscreen_ui_hint()
-
 var _file_dialog_save
 
 onready var _command_lines = preload("res://ressources/script/console.gd").new()
 onready var textedit_cmd = self.get_node("CanvasLayer/Control/Panel/textedit")
+onready var _username_textedit = self.get_node("CanvasLayer/HBoxContainerHighScore/textedit_user_name")
+
+onready var tileset_brick = self.get_node("tilemap_bricks")
 
 onready var _cheatc_object = preload("res://ressources/script/cheat_code.gd").new()
-
-var _pause = false
 
 var _force_player_position = false
 
@@ -29,11 +28,11 @@ var _gameplay_mode = "platform"
 
 var _ball_launched = false
 
-var _plane_obj
-
 var _player_life = 3
 
 var _ball_object_can_be_destroyed = true #for every ball objects
+
+var _pause = false #used to pause children game objects
 
  
 var score_saved = false
@@ -75,7 +74,7 @@ var _jscript_object = JavaScript
 var _is_player_on_web_app = false
 
 func _ready():
-	if not self._is_having_touchpad or OS.get_name().to_lower() in ["windows"]:
+	if not OS.has_touchscreen_ui_hint() or OS.get_name().to_lower() in ["windows"]:
 		self.destroy_touchbtn()
 	
 	self.set_highscore_ui_enabled(false)
@@ -88,50 +87,28 @@ func _ready():
 	
 	self.init_cam(self._cam_obj)
 	
-	self.get_node("tilemap_bricks").visible = false
+	self.tileset_brick.visible = false
 	
-	
-#	var js_script = preload("res://ressources/script/http_app/js.gd").new()
-#	self.add_child(js_script)
-#	self._player_name = js_script.get_username()
 	randomize()
 	self._player_name = "Guest"+str(randi()%100+1)
 	
 	self._max_ball = len(self.get_node("bricks").get_children())
 	
 	self.set_gameplay_mode("platform")
-	self.spawn_platform_player()
-
-
-func spawn_platform_player():
-	"""
-		Should be used for spawning platform player but this one
-		is already added this one is used for now to place platform
-		player at the start of the game
-	"""
-	"""
-	var spawn_global_pos = Vector2.ZERO
-	var screen_size = OS.window_size
-	
-	spawn_global_pos.x = screen_size.x / 1.7
-	spawn_global_pos.y = 844
-	
-	self._player_object_platform.global_position = spawn_global_pos
-	"""
 	self._player_object_platform.global_position.x = 500
 
 
 
-func _physics_process(delta):
+
+func _physics_process(_delta):
 	"""mainruntime global"""
 	self.check_sound()
 	if self._is_game_playing:
 		self.message_loop()
-		var txteditor_obj = self.get_node("CanvasLayer/Control/Panel/textedit")
 		var all_lines_cmd = self.get_node("CanvasLayer/Control/Panel/rich_textbox")
 		if Input.is_action_just_released("new_line") and self.get_focus():
 			if self.get_focus().name == "textedit":
-				self._command_lines.manage_command(txteditor_obj, all_lines_cmd, self)
+				self._command_lines.manage_command(self.textedit_cmd, all_lines_cmd, self)
 		
 		if self._gameplay_mode == "anim_pieces":
 			self.play_animation()
@@ -375,12 +352,11 @@ func init_cam(camera_obj):
 
 func get_map():
 	"""iterate the tile map for save to dictionnary"""
-	var tile_bricks = self.get_node("tilemap_bricks")
 	var dict_maps = {}
 	var cell_tile_id; var cell_i = 0
-	for cell in tile_bricks.get_used_cells():
-		cell_tile_id = tile_bricks.get_cellv(cell)
-		dict_maps[cell_i] = tile_bricks.tile_set.tile_get_name(cell_tile_id)
+	for cell in self.tileset_brick.get_used_cells():
+		cell_tile_id = self.tileset_brick.get_cellv(cell)
+		dict_maps[cell_i] = self.tileset_brick.tile_set.tile_get_name(cell_tile_id)
 		cell_i += 1
 	
 	return dict_maps
@@ -398,15 +374,11 @@ func launch_ball(global_pos):
 
 func load_map():
 	"""used for load the map"""
-	var tile_bricks = self.get_node("tilemap_bricks")
-	var pos
-	var cell_id; var cell_name
-	for cell in tile_bricks.get_used_cells():
-		cell_id = tile_bricks.get_cellv(cell)
-		cell_name = tile_bricks.tile_set.tile_get_name(cell_id)
+	for cell in self.tileset_brick.get_used_cells():
+		var cell_name = self.tileset_brick.tile_set.tile_get_name(self.tileset_brick.get_cellv(cell))
 		if not "black" in cell_name:
-			pos = tile_bricks.map_to_world(cell) + Vector2(25,12)
-			self.create_brick(pos, cell_name)
+			self.create_brick(self.tileset_brick.map_to_world(cell) + Vector2(25,12),
+								cell_name)
 			self._maximum_bricks += 1
 
 func get_brick_information(cell_name):
@@ -456,21 +428,19 @@ func _input(event):
 		self._cheatc_object.manage_cheat_code(event.as_text())
 
 func manage_camera(mode, cam_object = null):
-	var cam_gameplay = self.get_node("cam")
-	
 	match mode:
 		"gameplay":
 			if self._cam_debug:
 				self._cam_debug.current = false
 			
-			cam_gameplay.current = true
+			self._cam_obj.current = true
 			
 			if self.has_node("cam_debug"):
 				self._cam_debug.queue_free()
 				self._cam_debug = null
 			
 		"debug":
-			cam_gameplay.current = false
+			self._cam_obj.current = false
 			
 			self._cam_debug = Camera2D.new()
 			self._cam_debug.current = true
@@ -478,13 +448,13 @@ func manage_camera(mode, cam_object = null):
 			self.add_child(self._cam_debug)
 			self._cam_debug.name = "cam_debug"
 			
-			self._cam_debug.global_position = cam_gameplay.global_position
-			self._cam_debug.zoom = cam_gameplay.zoom
+			self._cam_debug.global_position = self._cam_obj.global_position
+			self._cam_debug.zoom = self._cam_obj.zoom
 			
 			self.init_cam(self._cam_debug)
 		"rocket":
 			if self._gameplay_mode in ["plane", "platform"] and self._gameplay_mode == "platform":
-				cam_gameplay.current = false
+				self._cam_obj.current = false
 				cam_object.current = true
 				
 				self.init_cam(cam_object)
@@ -589,7 +559,7 @@ func manage_spawning_item_by_cheat_or_console(item_name,
 			object.spawn(is_rocket_rc, global_pos)
 			
 			if ammo:
-				self.get_node("player")._weapon_data["rocket"] = ammo
+				self._player_object_platform._weapon_data["rocket"] = ammo
 	
 		elif "plane" in item_name and not "rc" in item_name:
 			if self._gameplay_mode == "platform":
@@ -665,7 +635,6 @@ func set_gameplay_mode(new_gameplay_mode:String, player_node = null):
 
 func set_if_ball_object_can_be_destroyed(b):
 	self._ball_object_can_be_destroyed = b
-	
 	var ball_obj = self.get_node_or_null("ball")
 	
 	if ball_obj:
@@ -687,7 +656,7 @@ func check_map_bottom():
 			self._player_life -= 1
 			ball_node.queue_free()
 			
-			self.get_node("player").set_ball(false)
+			self._player_object_platform.set_ball(false)
 			self.add_message("Survive "+str(self._player_life)+" time!")
 			
 	list_children_obj += self.get_node("character").get_children()
@@ -757,31 +726,7 @@ func message_loop():
 			
 			_list_message.pop_at(0)
 
-#func show_message(message):
-#	"""
-#		Called when the software want to show a message to the user
-#		for the gameplay
-#
-#		message (string) is the message that will be show
-#	"""
-#	print_stack()
-#	var player_node; var message_inst
-#	var message_global_pos
-#
-#
-#	if player_node.has_node("message_object"):
-#		message_inst = player_node.get_node("message_object")
-#		message_inst.reset()
-#	else:
-#		message_global_pos = player_node.global_position
-#
-#		message_inst = preload("res://ressources/scene/uth/message_user.tscn").instance()
-#
-#		player_node.add_child(message_inst)
-#		message_inst.spawn(message_global_pos)
-#		message_inst.name = "message_object"
-#
-#	message_inst.set_text(message)
+
 
 func get_bricks_still():
 	"""
@@ -792,11 +737,11 @@ func get_bricks_still():
 func get_gameplay_mode():
 	return self._gameplay_mode
 
-func get_first_key_from_dict(dict_):
-	"""
-		Return the first key of the dictionnary passed as argumetn
-	"""
-	return dict_.keys()[0]
+#func get_first_key_from_dict(dict_):
+#	"""
+#		Return the first key of the dictionnary passed as argumetn
+#	"""
+#	return dict_.keys()[0]
 
 func add_sound_to_audiostreamplayer(audio_name:String, play_pitch=1.0, play_volume=1.0):
 	"""
@@ -874,20 +819,19 @@ func check_sound():
 			play_volume (1.0) : is the volume for the audio stream player
 		
 	"""
-	var first_key; var list_value
+	var first_key
 	
 	if len(self._dict_audiostreamplayer_shoot) > 0:
-		first_key = self.get_first_key_from_dict(self._dict_audiostreamplayer_shoot)
-		list_value = self._dict_audiostreamplayer_shoot[first_key]
 		
-		if not list_value[0].is_playing():
+		first_key = self._dict_audiostreamplayer_shoot.keys()[0]
+		
+		if not self._dict_audiostreamplayer_shoot[first_key][0].is_playing():
 			self._dict_audiostreamplayer_shoot.erase(first_key)
 	
 	if len(self._dict_audiostreamplayer2D) > 0:
-		first_key = self.get_first_key_from_dict(self._dict_audiostreamplayer2D)
-		list_value = self._dict_audiostreamplayer2D[first_key]
+		first_key = self._dict_audiostreamplayer2D[0]
 		
-		if not list_value[1].is_playing():
+		if not self._dict_audiostreamplayer2D[first_key][1].is_playing():
 			self._dict_audiostreamplayer2D.erase(first_key)
 
 
@@ -935,13 +879,11 @@ func play_animation():
 	"""
 	var current_camera = self.get_current_camera_object()
 	var current_cam_global_pos = current_camera.global_position
-	var gameplay_cam_global_pos = self.get_node("cam").global_position
+	var gameplay_cam_global_pos = self._cam_obj.global_position
 	var is_global_pos_x_the_same = (current_cam_global_pos.x > gameplay_cam_global_pos.x-0.10 and\
 									 current_cam_global_pos.x < gameplay_cam_global_pos.x+0.10)
-	var is_global_pos_y_the_same = (current_cam_global_pos.y > gameplay_cam_global_pos.y-0.10 and\
-									 current_cam_global_pos.y < gameplay_cam_global_pos.y+0.10)
 	
-	var gameplay_cam_zoom = self.get_node("cam").zoom
+	var gameplay_cam_zoom = self._cam_obj.zoom
 	
 	if current_cam_global_pos.x < gameplay_cam_global_pos.x-50 or\
 	  current_cam_global_pos.y < gameplay_cam_global_pos.y-50:
@@ -983,14 +925,14 @@ func set_highscore_ui_enabled(enabled):
 		btn_object.disabled = (not enabled)
 		btn_object.visible = enabled
 	
-	var textedit_object = self.get_node("CanvasLayer/HBoxContainerHighScore/textedit_user_name")
+	var textedit_object = self._username_textedit
 	textedit_object.visible = enabled
 	textedit_object.readonly = (not enabled)
 
 
 func _on_buttonSubmitScore_pressed():
 	"""Called when the user wanted """
-	var player_name = self.get_node("CanvasLayer/HBoxContainerHighScore/textedit_user_name").text
+	var player_name = self._username_textedit.text
 	if OS.has_touchscreen_ui_hint() or OS.has_feature("mobile"):
 		player_name = JavaScript.eval("alert(\"Your username:\")")
 	
@@ -1049,7 +991,6 @@ func get_distance_items_platform(list_all_obj):
 		Get all distances items from platform
 	"""
 	var dict_obj_dist = {}
-	var platform_gpos_x = self._player_object_platform.global_position.x
 	var result = 0.00
 	for o in list_all_obj:
 		if o.name == "plane":
@@ -1067,8 +1008,6 @@ func get_lowest_distance_from_dict(dict_dist:Dictionary):
 		it self and the player's platform
 	"""
 	var lowest_distance = 0.00; var lowest_object = null
-	var distance = 0.00
-	var dict_item_dist = {}
 	for object in dict_dist:
 		if dict_dist[object] < lowest_distance:
 			lowest_distance = dict_dist[object]

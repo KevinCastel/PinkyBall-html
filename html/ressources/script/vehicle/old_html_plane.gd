@@ -99,7 +99,7 @@ func _physics_process(_delta):
 	
 	if not self._can_collide_with_brick:
 		if self.get_unix_time() > self._spawn_unix_time+self._MAX_CHRONO_BRICK_SECOND:
-			if not self.get_if_is_colliding_with("brick"):
+			if not self.get_if_is_colliding_with():
 				self.set_collision_brick(true)
 				self._can_collide_with_brick = true
 				self.set_collision_ball(true)
@@ -131,7 +131,6 @@ func _physics_process(_delta):
 			self.shoot()
 		
 		if Input.is_action_just_released("player_change_direction"):
-			var speed_x
 			if self._direction == 1:
 				self._direction = -1
 				self.flip_object("right")
@@ -431,15 +430,6 @@ func check_flip():
 		self.rotation_degrees = 90
 
 
-func set_brick_collision(can_collide_with_bricks):
-	"""
-		set the brick collision
-		
-		Take Args AS:
-			can_collide_with_bricks (bool)
-	"""
-	pass
-
 
 func _on_area2D_body_entered(body):
 	"""event used for """
@@ -476,7 +466,7 @@ func play_sound():
 	var first_key
 	
 	if len(self._dict_sound) > 0:
-		first_key = self.find_parent("game").get_first_key_from_dict(self._dict_sound)
+		first_key = self._dict_sound.keys()[0]
 		
 		if not self._dict_sound[first_key].is_playing():
 			self.get_node("sound/"+first_key).queue_free()
@@ -598,7 +588,7 @@ func get_unix_time():
 	return OS.get_unix_time()
 
 
-func get_if_is_colliding_with(object_name:String):
+func get_if_is_colliding_with():
 	"""
 		Return if area2D is colliding with a object of the name of object_name
 		

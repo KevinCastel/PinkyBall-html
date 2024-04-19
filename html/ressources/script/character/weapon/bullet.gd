@@ -19,7 +19,7 @@ func spawn(global_pos : Vector2, direction : int):
 	self._vel = Vector2(4*direction, 0)
 
 
-func _physics_process(delta):
+func _physics_process(_delta):
 	var coll = self.move_and_collide(self._vel)
 	
 	if self._brick_brocken == self._MAX_BRICK_TO_BREAK:self.destroy()
@@ -37,7 +37,6 @@ func collide(coll_object):
 	"""
 	var coll_name = coll_object.name
 	self._brick_brocken -= int("brick" in coll_name)
-#	print_debug(coll_name)
 	if "wall" in coll_name:
 		self.queue_free()
 	

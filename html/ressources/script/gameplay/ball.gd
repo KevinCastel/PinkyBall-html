@@ -23,7 +23,7 @@ func spawn(global_pos):
 	self._speed = 1.0
 
 
-func _physics_process(delta):
+func _physics_process(_delta):
 	if self.get_parent()._pause:return
 	if self._is_paused:return
 	

@@ -10,42 +10,41 @@ var _second_unix_spawn
 
 var _can_collide_with_brick = false
 
+onready var _gameplay = self.find_parent("game")
+
 func _physics_process(_delta):
 	"""main runtime"""
 	self.accelerate()
 	
 	self.apply_impulse(Vector2.ZERO, self._vel)
 	
-	
 	self.check_chrono_destruction()
 
 func spawn(global_pos, rota, impulse_y, impulse_x):
 	"""spawn while using the global position"""
-	self.set_datetime()
+	self._second_unix_spawn = OS.get_unix_time()
 	self.global_position = global_pos
 	self.rotation_degrees = rota
 	
 	var vel_impulse = Vector2(impulse_x, impulse_y)
 	self.apply_impulse(Vector2.ZERO, vel_impulse) 
 	
-	self.set_brick_collision(false)
+	self.set_collision_mask_bit(5, false)
 	
 	self.contact_monitor = true
 	self.contacts_reported = 5
 
 
 func check_chrono_destruction():
-	var actual_second = OS.get_unix_time()
-	if int(actual_second) > int(self._second_unix_spawn)+3:
+	var actual_unix_time = OS.get_unix_time()
+	var LIFE_DELAY_SECOND = 3
+	if int(actual_unix_time) > int(self._second_unix_spawn)+LIFE_DELAY_SECOND:
 		self.explose()
 
-func set_datetime():
-	self._second_unix_spawn = OS.get_unix_time()
 
 func accelerate():
 	"""set the acceleration"""
 	self._vel = self.transform.x * self._speed
-	
 	self._speed = lerp(self._speed, 0.00, 0.10)
 
 
@@ -57,7 +56,7 @@ func check_raycast_collision():
 		coll_object = raycast_node.get_collider()
 		if "brick" in coll_object.name:
 			if coll_object._superpower != "":
-				self.find_parent("game").set_futur_character_superpower(
+				self._gameplay.set_futur_character_superpower(
 											coll_object._superpower)
 		
 		if coll_object.has_method("destroy"):
@@ -75,33 +74,21 @@ func _on_area2D_body_exited(body):
 	"""
 		event that used for removing collision (body's name) in _list_collision
 	"""
-	var i = self._list_collision.find(body.name)
-	self._list_collision.remove(i)
+	var collider_remove = self._list_collision.find(body.name)
+	self._list_collision.remove(collider_remove)
 	if not self._can_collide_with_brick:
-		self._can_collide_with_brick = (not self.check_if_list_collision_contains_str(
-			self._list_collision,
-			"brick"))
+		self._can_collide_with_brick = (not self.get_list_collision_contains_string_object())
 	if self._can_collide_with_brick:
-		self.set_brick_collision(true)
+		self.set_collision_mask_bit(5, true)
 
 
-func check_if_list_collision_contains_str(list_:Array, string_:String):
-	"""return if a list(list_) contains a string (string_)"""
+func get_list_collision_contains_string_object():
+	"""return if an string type is contains in the list_collisions"""
 	var does_list_contains_string = false
-	for e in list_:
+	for collider in self._list_collision:
 		if not does_list_contains_string:
-			does_list_contains_string = (string_ in e)
+			does_list_contains_string = ("brick" in collider)
 	return does_list_contains_string
-
-func set_brick_collision(collide_with_brick:bool):
-	"""
-		Set the collision of this object with brick (mask 5)
-		
-		Take Args As:
-			collide_with_brick (bool) set if this object collide
-			with brick or not
-	"""
-	self.set_collision_mask_bit(5, collide_with_brick)
 
 
 func _on_plane_ammu_body_entered(body):
@@ -127,15 +114,13 @@ func collide_with_brick(brick_superpower):
 		Take Args As:
 			brick_superpower (String)
 	"""
-	if brick_superpower == null:brick_superpower = ""
-	if brick_superpower != "":
-		self.find_parent("game").character_futur_superpower = brick_superpower
+	if brick_superpower != "" && brick_superpower != null:
+		self._gameplay.character_futur_superpower = brick_superpower
 
 
 func explose():
 	"""called by a event when is colliding, make it explose"""
-	var parent = self.get_parent().get_parent()
-	parent.manage_explosion(self.global_position, "", 2)
+	self._gameplay.manage_explosion(self.global_position, "", 2)
 	self.queue_free()
 
 

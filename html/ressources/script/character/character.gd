@@ -108,13 +108,12 @@ func spawn(global_pos:Vector2, colur:String, pseudo="guest"):
 	self.create_camera()
 
 
-func set_texture(colur):
-	var dict_texture = {
-		"pink" : preload("res://ressources/img/character/tileset_pink_character.png"),
-		"blue" : preload("res://ressources/img/character/tileset_blue_character.png"),
-		"green" : preload("res://ressources/img/character/tileset_green_character.png"),
-		"yellow" : preload("res://ressources/img/character/tileset_yellow_character.png")}
-	var t
+#func set_texture(colur):
+#	var dict_texture = {
+#		"pink" : preload("res://ressources/img/character/tileset_pink_character.png"),
+#		"blue" : preload("res://ressources/img/character/tileset_blue_character.png"),
+#		"green" : preload("res://ressources/img/character/tileset_green_character.png"),
+#		"yellow" : preload("res://ressources/img/character/tileset_yellow_character.png")}
 #	if colur in dict_texture:
 #		t = dict_texture[colur]
 #		self._sprite_obj.texture = t
@@ -403,9 +402,6 @@ func check_input():
 	else:
 		self._jump_force = 0
 	
-	var bonus_speed = 0
-	if self._bonus_speed > 0.00:
-		bonus_speed = self._bonus_speed/2.15
 	
 	if Input.is_action_pressed("player_right"):
 		if self.is_on_floor():
@@ -686,7 +682,7 @@ func spawn_pieces():
 	
 	var list_local_position_y_sub = [8,0,4,6,8]
 	
-	var obj; var local_pos
+	var obj
 	var i = 0
 	var global_pos = self.global_position
 	global_pos.y += 8

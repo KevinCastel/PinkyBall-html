@@ -84,8 +84,7 @@ func delete_audio_player():
 	"""
 	var first_key
 	if len(self._dict_sound):
-		first_key = self.find_parent("game").get_first_key_from_dict(self._dict_sound)
-		
+		first_key = self._dict_sound.keys()[0]
 		if not self._dict_sound[first_key].is_playing():
 			if self.get_node_or_null("sound/"+first_key):
 				self.get_node("sound/"+first_key).queue_free()

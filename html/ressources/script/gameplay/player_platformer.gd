@@ -305,7 +305,7 @@ func _on_area2D_ball_body_exited(body):
 		self._dict_spawn_area.erase(body.name)
 
 
-func add_sound(play_pitch=1.0, play_volume=10.0):
+func add_sound(play_volume=10.0):
 	randomize()
 	var n = "impact"+str(randi())
 	
@@ -322,11 +322,11 @@ func add_sound(play_pitch=1.0, play_volume=10.0):
 
 
 func play_sound():
-	var value; var first_key
+	var first_key
 	if len(self._dict_sound) > 0:
-		first_key = self._parent.get_first_key_from_dict(self._dict_sound)
-		value = self._dict_sound[first_key]
-		if not value.is_playing():
+		first_key = self._dict_sound.keys()[0]
+		
+		if not self._dict_sound[first_key].is_playing():
 			if self.get_node_or_null("sound/"+first_key):
 				self.get_node("sound/"+first_key).queue_free()
 				self._dict_sound.erase(first_key)
