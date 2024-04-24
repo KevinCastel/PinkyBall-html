@@ -20,16 +20,35 @@ enum {WALK,FALL,JUMP,IDLE}
 
 var _cam_object
 
-var _pseudo = "guest"
 
 var _colur = ""
 
 onready var _audiostreamplayer2D_jetpack = self.get_node("jet_pack/audiostreamplayer2D_jet_pack")
 
-onready var _sprite_jet_pack_obj = self.get_node("jet_pack/sprite_jet_pack")
-#onready var _sprite_obj = self.get_node("sprite")
+onready var _sprite_jet_pack = self.get_node("jet_pack/sprite_jet_pack")
+onready var _sprite_jet_pack_flame = self.get_node("jet_pack/sprite_flame")
+onready var _jet_pack_obj = self.get_node("jet_pack")
 
-onready var _parent = self.get_parent().get_parent()
+onready var bullet_explosive = preload("res://ressources/scene/character/explosive_ball.tscn")
+onready var rocket_explosive = preload("res://ressources/scene/character/rocket.tscn")
+onready var bullet = preload("res://ressources/scene/character/bullet.tscn")
+#var bullet_inst = preload("res://ressources/scene/character/bullet.tscn").instance()
+onready var _game = self.get_parent().get_parent()
+
+var _dict_sound_src = {
+	"jump" : preload("res://ressources/sound/character/Jump.wav"),
+	"fall" : preload("res://ressources/sound/character/Fall.wav"),
+	"unbroken_brick" : preload("res://ressources/sound/character/unbroken_brick.wav"),
+	"broken_brick" : preload("res://ressources/sound/character/broken_brick.wav"),
+	"die" : preload("res://ressources/sound/character/die.wav"),
+	"hurt" : preload("res://ressources/sound/character/Hurt.wav")}
+
+var _dict_pieces_src = {"head" : preload("res://ressources/scene/character/pieces/head.tscn"),
+	"arms" : preload("res://ressources/scene/character/pieces/arms.tscn"),
+	"body" : preload("res://ressources/scene/character/pieces/body.tscn"),
+	"legs" : preload("res://ressources/scene/character/pieces/legs.tscn"),
+	"foot" : preload("res://ressources/scene/character/pieces/foot.tscn")}
+
 
 var _jump_force = 0
 
@@ -63,7 +82,7 @@ var _dict_ammo = {"micro_bomb":0, "micro_rocket":0, "bullet":0}
 const MAX_SECOND_DESTROYING = 100
 
 var _last_minute = 0
-var _unix_spawn_time = self.get_unix_time()
+var _unix_spawn_time = OS.get_unix_time()
 
 var _chrono_jet_pack_flame_anim = 0
 const MAXIMUM_CHRONOS_JET_PACK = 4
@@ -75,7 +94,9 @@ var _acceleration_jet_pack = 0
 const MAXIMUM_ACCELERATION_JET_PACK = 0.1
 
 var _unix_jet_pack
-var MAXIMUM_JET_PACK_SECOND = 15
+var MAXIMUM_JET_PACK_SECOND = 2
+
+var MAXIMUM_JET_PACK_Y = 12
 
 var _dict_jet_pack_light_texture = {
 	0:preload("res://ressources/img/effects/jet-pack/j0.png"),
@@ -85,7 +106,7 @@ var _dict_jet_pack_light_texture = {
 } #the index is the frame index on the tile sprites used for the jet pack sprite
 
 
-func spawn(global_pos:Vector2, colur:String, pseudo="guest"):
+func spawn(global_pos:Vector2, colur:String):
 	"""
 		Spawn this object
 		
@@ -94,15 +115,18 @@ func spawn(global_pos:Vector2, colur:String, pseudo="guest"):
 			pseudo (str) is the player/bot name
 			colur (str) is the color of this object
 	"""
-	if self._parent.character_futur_superpower != "":
-		self.set_ammo(self._parent.character_futur_superpower)
+	if self._game.character_futur_superpower != "":
+		self.set_ammo(self._game.character_futur_superpower)
+	
+
+	self._game.set_btn_mobile_visibility("shoot", false)
+	self._game.set_btn_mobile_visibility("up", true)
 	
 	self.set_jet_pack_visibility(false)
-	self._unix_spawn_time = self.get_unix_time()
+	self._unix_spawn_time = OS.get_unix_time()
 	self.global_position = global_pos
 	self.change_state(IDLE)
 	
-	self._pseudo = pseudo
 	self._colur = colur
 	
 	self.create_camera()
@@ -149,12 +173,15 @@ func _physics_process(_delta):
 		self._can_play_jump_sound = false
 		self._can_play_fall_sound = false
 		if self._falling_damage > 0.00:
+			print("falling_damage: ",self._falling_damage)
 			self.add_sound("hurt")
 			self._life -= self._falling_damage
 			self._falling_damage = 0.00
+			
+			if self._life < 0:
+				self.die()
 	else:
-		if self._vel.y > 1:
-			self._falling_damage += self._vel.y
+		self._falling_damage += abs(self._vel.y/2000)
 		
 		if not self._is_play_jump_sound:
 			self.add_sound("jump")
@@ -228,16 +255,15 @@ func change_state(new_state):
 			self.change_animation("fall")
 
 
-func set_jet_pack_visibility(v):
-	self.get_node("jet_pack/sprite_flame").visible = v
-	self.get_node("jet_pack/sprite_jet_pack").visible = v
-	self.get_node("jet_pack/light2D").visible = v
+func set_jet_pack_visibility(visible):
+	self._jet_pack_obj.get_node("sprite_flame").visible = visible
+	self._jet_pack_obj.get_node("sprite_jet_pack").visible = visible
+	self._jet_pack_obj.get_node("light2D").visible = visible
 
 
 func play_animation_jet_pack():
 	var i_frame
 	if self._chrono_jet_pack_flame_anim == self.MAXIMUM_CHRONOS_JET_PACK:
-		var jet_pack_flame = self.get_node("jet_pack/sprite_flame")
 		randomize()
 		i_frame = randi()%3+1
 		
@@ -251,7 +277,7 @@ func play_animation_jet_pack():
 				if i_frame == 0:
 					i_frame = 1
 		
-		jet_pack_flame.frame = i_frame
+		self._sprite_jet_pack_flame.frame = i_frame
 		
 		self._chrono_jet_pack_flame_anim = 0
 	else:
@@ -265,7 +291,7 @@ func play_jet_pack_light_animation():
 		Called when the player got the jet-pack,
 		This is used for setting up light animation
 	"""
-	var i = self._sprite_jet_pack_obj.frame
+	var i = self._sprite_jet_pack.frame
 	var jet_pack_light = self.get_node("jet_pack/light2D")
 	
 	jet_pack_light.texture = self._dict_jet_pack_light_texture[i]
@@ -326,14 +352,13 @@ func shoot(weapon):
 	"""
 		Used as event when the player shoot
 	"""
+	self._game.stats_object.add_ammo_fired(self.get_weapon_name_to_string(self._weapon))
 	
-	self._parent.stats_object.add_ammo_fired(self.get_weapon_name_to_string(self._weapon))
+	var bullet_explosive_inst = self.bullet_explosive.instance()
+	var rocket_explosive_inst = self.rocket_explosive.instance()
+	var bullet_inst = self.bullet.instance()
 	
-	var bullet_explosive_inst = preload("res://ressources/scene/character/explosive_ball.tscn").instance()
-	var rocket_explosive_inst = preload("res://ressources/scene/character/rocket.tscn").instance()
-	var bullet_inst = preload("res://ressources/scene/character/bullet.tscn").instance()
-	
-	var ammu_parent_node = self.find_parent("game").get_node("ammu")
+	var ammu_parent_node = self._game.get_node("ammu")
 	var sprite_flip_h = self.get_node("skin").flip_h
 	
 	match weapon:
@@ -344,7 +369,7 @@ func shoot(weapon):
 		
 		ROCKET:
 			self._chrono_shoot_sound += 0.002
-			self._parent.add_sound_to_audiostreamplayer("rocket_character")
+			self._game.add_sound_to_audiostreamplayer("rocket_character")
 			ammu_parent_node.add_child(rocket_explosive_inst)
 			rocket_explosive_inst.spawn(self.position2D_muzzle.global_position,
 				sprite_flip_h)
@@ -355,7 +380,7 @@ func shoot(weapon):
 			bullet_inst.spawn(self.position2D_muzzle.global_position,
 				0+int(not sprite_flip_h)-int(int(sprite_flip_h) == 1)
 				)
-			self._parent.add_sound_to_audiostreamplayer("bullet",
+			self._game.add_sound_to_audiostreamplayer("bullet",
 				1.3+self._chrono_shoot_sound,
 				1.3+self._chrono_shoot_sound)
 
@@ -364,15 +389,19 @@ func check_input():
 	if Input.is_action_just_released("plane_shoot"):
 		if self._weapon in [ROCKET, EXPLOSIVE_BULLET, BULLET]:
 			weap_name = self.get_weapon_name_to_string(self._weapon)
-			if self._dict_ammo[weap_name] > 0:
+			var ammo_still =  self._dict_ammo[weap_name]
+			if ammo_still > 0:
 				self._dict_ammo[weap_name] -= 1
 				self.shoot(self._weapon)
+			if ammo_still == 0:
+				self._game.set_btn_mobile_visibility("shoot", false)
+			
 		elif self._does_have_jet_pack:
 			self._does_have_jet_pack = false
 			self.set_jet_pack_visibility(false)
 			self._audiostreamplayer2D_jetpack.autoplay = false
 			self._audiostreamplayer2D_jetpack.stop()
-			self._parent.add_sound_to_audiostreamplayer("end_jet_pack")
+			self._game.add_sound_to_audiostreamplayer("end_jet_pack")
 	
 	if self._does_have_jet_pack:
 		self._jump_force = 0
@@ -393,15 +422,15 @@ func check_input():
 		
 	elif Input.is_action_pressed("player_launch_ball"):
 		if self._does_have_jet_pack:
-			self._acceleration_jet_pack = max(self._acceleration_jet_pack+0.02, self.MAXIMUM_ACCELERATION_JET_PACK)
-			self._vel.y -= self._acceleration_jet_pack
+			if self.global_position.y+self._vel.y > 2:
+				self._acceleration_jet_pack = max(self._acceleration_jet_pack+0.02, self.MAXIMUM_ACCELERATION_JET_PACK)
+				self._vel.y -= self._acceleration_jet_pack
 		else:
 			if self._jump_force < 5:
 				self._jump_force += 0.10
 			 
 	else:
 		self._jump_force = 0
-	
 	
 	if Input.is_action_pressed("player_right"):
 		if self.is_on_floor():
@@ -436,26 +465,23 @@ func flip_sprites(f):
 	self.get_node("front_arm").flip_h = f
 	self.get_node("skin").flip_h = f
 	
-	var jet_pack_sprite_obj = self.get_node("jet_pack/sprite_jet_pack")
+	self._sprite_jet_pack_flame.flip_h = f
+	self._sprite_jet_pack.flip_h = f
 	
-	self.get_node("jet_pack/sprite_flame").flip_h = f
-	jet_pack_sprite_obj.flip_h = f
+	var dir = 0+int(self._sprite_jet_pack.flip_h)-int(not self._sprite_jet_pack.flip_h)
 	
-	var dir = 0+int(jet_pack_sprite_obj.flip_h)-int(not jet_pack_sprite_obj.flip_h)
-	
-	self.get_node("jet_pack/sprite_flame").position.x = 4*dir
+	self._sprite_jet_pack_flame.position.x = 4*dir
 
 
 func check_raycast_2D():
 	"""check the raycast 2D collision"""
 	var raycast2D_obj = self.get_node("raycast_2D")
-	var collider
 	if raycast2D_obj.is_colliding():
-		collider = raycast2D_obj.get_collider()
+		var collider = raycast2D_obj.get_collider()
 		if "brick" in collider.name:
 			self.breack_brick(collider)
 		else:
-			self._parent.add_sound_to_audiostreamplayer("unbrocken_brick_character")
+			self._game.add_sound_to_audiostreamplayer("unbrocken_brick_character")
 			self._vel.y = 0
 			self._jump_force = 0
 
@@ -475,10 +501,11 @@ func breack_brick(collider):
 		self.set_ammo(brick_superpower)
 		collider.queue_free()
 	elif brick_superpower == "plane":
-		self._unix_jet_pack = self.get_unix_time()
+		self._unix_jet_pack = OS.get_unix_time()
 		self._does_have_jet_pack = true
 		self.set_jet_pack_visibility(true)
-		self._parent.add_sound_to_audiostreamplayer("starting_on_jet_pack", 1.0, -15)
+		self._game.add_sound_to_audiostreamplayer("starting_on_jet_pack", 1.0, -15)
+		self._game.set_btn_mobile_visibility("down", true)
 		collider.queue_free()
 	elif brick_superpower == "coffee":
 		self._bonus_speed = 100
@@ -500,6 +527,7 @@ func set_ammo(weapon_name:String):
 		Used to set the player's character ammo and weapon
 	"""
 	randomize()
+	self._game.set_btn_mobile_visibility("shoot",true)
 	match weapon_name:
 		"bullet":
 			self._dict_ammo["bullet"] += (randi()%6)+1
@@ -522,8 +550,8 @@ func create_camera():
 	"""create a camera object for this object"""
 	self._cam_object = Camera2D.new()
 	self.add_child(self._cam_object)
-	self._parent.set_gameplay_mode("character")
-	self._parent.manage_camera("character", self._cam_object)
+	self._game.set_gameplay_mode("character")
+	self._game.manage_camera("character", self._cam_object)
 	
 	self._cam_object.zoom = Vector2(0.5,0.5)
 
@@ -534,8 +562,9 @@ func remove_camera():
 		
 		Bug here
 	"""
-	self._parent.set_gameplay_mode("platform", self)
-	self._parent.manage_camera("gameplay", self._cam_object)
+	print_stack()
+	self._game.set_gameplay_mode("platform", self)
+	self._game.manage_camera("gameplay", self._cam_object)
 	
 	if self._cam_object:
 		self._cam_object.queue_free()
@@ -544,47 +573,27 @@ func remove_camera():
 
 func on_collision_bottom():
 	"""destroy this object when this hits the bottom"""
-	self._parent.add_sound_to_audiostreamplayer("character_die_8bits", 1.0, -15)
-	self._parent.manage_camera("gameplay", self._cam_object)
+	self._game.add_sound_to_audiostreamplayer("character_die_8bits", 1.0, -15)
+	self._game.manage_camera("gameplay", self._cam_object)
 	self.remove_camera()
 	self.queue_free()
 
 
 func on_collision_explosion():
 	"""destroy on explosion collision"""
-	self._parent.add_sound_to_audiostreamplayer("character_die_8bits")
+	self._game.add_sound_to_audiostreamplayer("character_die_8bits")
 	self.remove_camera()
 	self.queue_free()
 
 
-func delete_sound():
-	"""
-		Delete sound object
-	"""
-	var first_key
-	if len(self._dict_sound) > 0:
-		first_key = self.find_parent("game").get_first_key_from_dict()
-		
-		if self.get_node_or_null("sound/"+first_key):
-			self.get_node("sound/"+first_key).queue_free()
-		
-		self._dict_sound.erase(first_key)
-
 
 func add_sound(sound_name:String):
-	var dict_sound = {
-		"jump" : preload("res://ressources/sound/character/Jump.wav"),
-		"fall" : preload("res://ressources/sound/character/Fall.wav"),
-		"unbroken_brick" : preload("res://ressources/sound/character/unbroken_brick.wav"),
-		"broken_brick" : preload("res://ressources/sound/character/broken_brick.wav"),
-		"die" : preload("res://ressources/sound/character/die.wav"),
-		"hurt" : preload("res://ressources/sound/character/Hurt.wav")}
 	randomize()
 	var n = sound_name+str(randi())
 	
 	var audiostream2D_object = AudioStreamPlayer2D.new()
 	
-	audiostream2D_object.stream = dict_sound[sound_name]
+	audiostream2D_object.stream = self._dict_sound_src[sound_name]
 	audiostream2D_object.name = n
 	
 	audiostream2D_object.play()
@@ -598,7 +607,6 @@ func camera_effect_loop():
 	var is_falling = (self._vel.y > 0.10 and not is_on_floor())
 	
 	var speed_zoom = abs(self._vel.x / (self._vel.x - 1000))
-	
 	
 	var acceleration_zoom = abs(self._speed/(self._vel.x-1000))
 	
@@ -631,17 +639,12 @@ func check_time():
 	"""
 		Check time if it have to destroy this object
 	"""
-	var minute
-	if self.get_unix_time()>self._unix_spawn_time+self.MAX_SECOND_DESTROYING:
+	if OS.get_unix_time()>self._unix_spawn_time+self.MAX_SECOND_DESTROYING:
 		self.die()
 	else:
-		minute = (self.get_unix_time() - self._unix_spawn_time)/60
-		if minute != self._last_minute:
-			self._last_minute = abs((self.MAX_SECOND_DESTROYING/60)-minute)
-
-
-func get_unix_time():
-	return OS.get_unix_time()
+		var remaining_minute = (OS.get_unix_time() - self._unix_spawn_time)/60
+		if remaining_minute != self._last_minute:
+			self._last_minute = abs((self.MAX_SECOND_DESTROYING/60)-remaining_minute)
 
 
 func check_jet_pack_time():
@@ -649,7 +652,7 @@ func check_jet_pack_time():
 		Check if the jet pack should be destroyed
 	"""
 	self._unix_jet_pack += 1
-	if self.get_unix_time() >= self._unix_jet_pack+self.MAXIMUM_JET_PACK_SECOND:
+	if OS.get_unix_time() >= self._unix_jet_pack+self.MAXIMUM_JET_PACK_SECOND:
 		self._does_have_jet_pack = false
 		self.set_jet_pack_visibility(false)
 		
@@ -657,14 +660,15 @@ func check_jet_pack_time():
 		self._audiostreamplayer2D_jetpack.stop()
 
 
-
 func die():
 	"""
 		Called for destroying this object
 	"""
 	self.spawn_pieces()
-	self._parent.set_gameplay_mode("anim_pieces")
-	self._parent.manage_camera("anim_pieces", self._cam_object)
+	self._game.set_btn_mobile_visibility("shoot", false)
+	self._game.set_btn_mobile_visibility("down", false)
+	self._game.set_gameplay_mode("anim_pieces")
+	self._game.manage_camera("anim_pieces", self._cam_object)
 	self.queue_free()
 
 
@@ -673,13 +677,6 @@ func spawn_pieces():
 		Spawn pieces from this object like (arms, body, head, ...etc)
 		When this object is destroying
 	"""
-	var dict_pieces_pos = {"head" : preload("res://ressources/scene/character/pieces/head.tscn"),
-		"arms" : preload("res://ressources/scene/character/pieces/arms.tscn"),
-		"body" : preload("res://ressources/scene/character/pieces/body.tscn"),
-		"legs" : preload("res://ressources/scene/character/pieces/legs.tscn"),
-		"foot" : preload("res://ressources/scene/character/pieces/foot.tscn")}
-	
-	
 	var list_local_position_y_sub = [8,0,4,6,8]
 	
 	var obj
@@ -687,9 +684,9 @@ func spawn_pieces():
 	var global_pos = self.global_position
 	global_pos.y += 8
 	
-	for p in dict_pieces_pos:
-		obj = dict_pieces_pos[p].instance()
-		self._parent.get_node("characters_pieces").add_child(obj)
+	for p in self._dict_pieces_src:
+		obj = self._dict_pieces_src[p].instance()
+		self._game.get_node("characters_pieces").add_child(obj)
 		obj.spawn(global_pos, self._vel)
 		
 		global_pos.y -= list_local_position_y_sub[i]
@@ -700,11 +697,9 @@ func play_jet_pack_sound():
 	if not self._audiostreamplayer2D_jetpack.playing and self._does_have_jet_pack:
 		self._audiostreamplayer2D_jetpack.autoplay = true
 		self._audiostreamplayer2D_jetpack.play()
-	elif not self._does_have_jet_pack:pass
+#	elif not self._does_have_jet_pack:pass
 #		self._audiostreamplayer2D_jetpack.
 #		self._audiostreamplayer2D_jetpack.stop()
-
-
 	
 	if self._vel.y < 0:
 		self._audiostreamplayer2D_jetpack.pitch_scale = 1.0+((abs(self._vel.y)+0.0015)/1200)
@@ -717,8 +712,6 @@ func play_jet_pack_sound():
 		self._audiostreamplayer2D_jetpack.pitch_scale = lerp(self._audiostreamplayer2D_jetpack.pitch_scale,
 														1.00+(self._vel.y/200),
 														0.010)
-	
-
 
 func on_ball_collision():
 	"""Called when a ball object collide with this object"""

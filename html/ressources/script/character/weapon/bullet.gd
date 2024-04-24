@@ -6,6 +6,10 @@ var _brick_brocken = 0
 
 const _MAX_BRICK_TO_BREAK = 10
 
+onready var _game = self.find_parent("game")
+
+onready var _explosive_ball = preload("res://ressources/scene/character/explosive_ball.tscn")
+
 func spawn(global_pos : Vector2, direction : int):
 	"""
 		Called for spawning this object
@@ -36,30 +40,30 @@ func collide(coll_object):
 			coll_object witch is the node colliding
 	"""
 	var coll_name = coll_object.name
-	self._brick_brocken -= int("brick" in coll_name)
+	self._brick_brocken -= int("brick" in coll_name) #convert bool to int
 	if "wall" in coll_name:
 		self.queue_free()
 	
 	if "brick" in coll_name:
-		self.find_parent("game").add_sound_to_audiostreamplayer("brick_impact")
-		if coll_object._superpower != "":
-			if coll_object._superpower == "bomb":
+		var superpower = coll_object._superpower
+		self._game.add_sound_to_audiostreamplayer("brick_impact")
+		if superpower != "":
+			if superpower == "bomb":
 				coll_object.on_impact()
-			elif coll_object._superpower == "rocket":
+			elif superpower == "rocket":
 				coll_object.on_impact()
 			
-		self.queue_free()
 		coll_object.queue_free()
+		self.queue_free()
 
 func on_collision_explosion():
 	"""
 		Event called from collision explosion
 	"""
-	var bullet_explosive_inst = preload("res://ressources/scene/character/explosive_ball.tscn").instance()
-	var ammu_node = self.find_parent("game").get_node("ammu")
+	var bullet_explosive_inst = self._explosive_ball.instance()
+	var ammu_node = self._game.get_node("ammu")
 	
 	ammu_node.call_deferred("add_child", bullet_explosive_inst)
-#	ammu_node.add_child(bullet_explosive_inst)
 	bullet_explosive_inst.spawn(self.global_position, 1, Vector2.ZERO)
 	
 	self.destroy()

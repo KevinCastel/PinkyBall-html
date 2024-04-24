@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=2]
+[gd_scene load_steps=22 format=2]
 
 [ext_resource path="res://ressources/tile/bricks.tres" type="TileSet" id=1]
 [ext_resource path="res://ressources/tile/wall.tres" type="TileSet" id=2]
@@ -38,6 +38,9 @@ font_data = ExtResource( 6 )
 
 [sub_resource type="StyleBoxFlat" id=3]
 bg_color = Color( 0, 0, 0, 1 )
+
+[sub_resource type="RectangleShape2D" id=9]
+extents = Vector2( 159.5, 104.5 )
 
 [node name="game" type="Node2D"]
 position = Vector2( 1, 0 )
@@ -154,37 +157,6 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="touchscreenbutton_right" type="TouchScreenButton" parent="CanvasLayer"]
-position = Vector2( 924, 409 )
-normal = ExtResource( 9 )
-action = "player_right"
-
-[node name="touchscreenbutton_left" type="TouchScreenButton" parent="CanvasLayer"]
-position = Vector2( 714, 409 )
-normal = ExtResource( 11 )
-action = "player_left"
-
-[node name="touchscreenbutton_up" type="TouchScreenButton" parent="CanvasLayer"]
-position = Vector2( 924, 409 )
-rotation = 3.14159
-normal = ExtResource( 10 )
-action = "player_launch_ball"
-
-[node name="touchscreenbutton_up2" type="TouchScreenButton" parent="CanvasLayer"]
-position = Vector2( 826, 409 )
-normal = ExtResource( 10 )
-action = "player_launch_ball"
-
-[node name="touchscreenbutton_get_out" type="TouchScreenButton" parent="CanvasLayer"]
-position = Vector2( 717, 310 )
-normal = ExtResource( 12 )
-action = "get-out_plane"
-
-[node name="touchscreenbutton_shoot" type="TouchScreenButton" parent="CanvasLayer"]
-position = Vector2( 923, 311 )
-normal = ExtResource( 8 )
-action = "plane_shoot"
-
 [node name="ColorRect" type="ColorRect" parent="CanvasLayer"]
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -237,6 +209,58 @@ margin_bottom = 47.0
 size_flags_horizontal = 3
 text = "Submit Your Score"
 
+[node name="ControlMobileBtn" type="Control" parent="CanvasLayer"]
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -324.0
+margin_top = -212.0
+margin_right = 1.0
+margin_bottom = -2.0
+
+[node name="NodeMobileBtn" type="Node2D" parent="CanvasLayer/ControlMobileBtn"]
+position = Vector2( 160, 107 )
+
+[node name="touchscreenbutton_right" type="TouchScreenButton" parent="CanvasLayer/ControlMobileBtn/NodeMobileBtn"]
+position = Vector2( 62, 6 )
+normal = ExtResource( 9 )
+action = "player_right"
+
+[node name="touchscreenbutton_left" type="TouchScreenButton" parent="CanvasLayer/ControlMobileBtn/NodeMobileBtn"]
+position = Vector2( -154, 6 )
+normal = ExtResource( 11 )
+action = "player_left"
+
+[node name="touchscreenbutton_up" type="TouchScreenButton" parent="CanvasLayer/ControlMobileBtn/NodeMobileBtn"]
+position = Vector2( 54.9995, -4 )
+rotation = 3.14159
+normal = ExtResource( 10 )
+action = "player_launch_ball"
+
+[node name="touchscreenbutton_down" type="TouchScreenButton" parent="CanvasLayer/ControlMobileBtn/NodeMobileBtn"]
+position = Vector2( -45, 6 )
+normal = ExtResource( 10 )
+action = "player_launch_ball"
+
+[node name="touchscreenbutton_get_out" type="TouchScreenButton" parent="CanvasLayer/ControlMobileBtn/NodeMobileBtn"]
+position = Vector2( -156, -100 )
+normal = ExtResource( 12 )
+action = "get-out_plane"
+
+[node name="touchscreenbutton_shoot" type="TouchScreenButton" parent="CanvasLayer/ControlMobileBtn/NodeMobileBtn"]
+position = Vector2( 65, -100 )
+normal = ExtResource( 8 )
+action = "plane_shoot"
+
+[node name="Area2DMobileBtns" type="Area2D" parent="CanvasLayer/ControlMobileBtn/NodeMobileBtn"]
+position = Vector2( 3, 1 )
+collision_layer = 131072
+collision_mask = 8
+
+[node name="CollisionShape2DMobileBtns" type="CollisionShape2D" parent="CanvasLayer/ControlMobileBtn/NodeMobileBtn/Area2DMobileBtns"]
+shape = SubResource( 9 )
+
 [node name="sound" type="Node" parent="."]
 
 [node name="sound_audiostreamplayer2D" type="Node2D" parent="."]
@@ -249,3 +273,5 @@ position = Vector2( 488, 606 )
 
 [connection signal="file_selected" from="CanvasLayer/SaveFileDialog" to="." method="_on_SaveFileDialog_file_selected"]
 [connection signal="pressed" from="CanvasLayer/HBoxContainerHighScore/buttonSubmitScore" to="." method="_on_buttonSubmitScore_pressed"]
+[connection signal="body_entered" from="CanvasLayer/ControlMobileBtn/NodeMobileBtn/Area2DMobileBtns" to="." method="_on_Area2DMobileBtns_body_entered"]
+[connection signal="body_exited" from="CanvasLayer/ControlMobileBtn/NodeMobileBtn/Area2DMobileBtns" to="." method="_on_Area2DMobileBtns_body_exited"]

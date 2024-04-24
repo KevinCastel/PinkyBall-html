@@ -179,8 +179,7 @@ func spawn_player_character():
 	self._parent.get_node("character").add_child(player_character_inst)
 	
 	player_character_inst.spawn(self.global_position,
-		"pink",
-		self._parent._player_name)
+		"pink")
 	self._parent.set_gameplay_mode("character")
 
 

@@ -21,7 +21,7 @@ func _ready():
 	self.set_labels_action()
 
 	self.set_buttons_event()
-	self.set_mouse_play(self.get_if_can_play_with_mouse())
+	self.set_can_mouse_play(self.get_if_can_play_with_mouse())
 
 
 func get_if_can_play_with_mouse():
@@ -32,11 +32,16 @@ func get_if_can_play_with_mouse():
 	return can_play_with_mouse
 
 
-func set_mouse_play(value):
+func set_can_mouse_play(value):
+	var mouse_input_event = InputEventMouseButton.new()
+	mouse_input_event.button_index = 1
+	
+	match value:
+		true:
+			InputMap.action_add_event("player_launch_ball", mouse_input_event)
+		false:
+			InputMap.action_erase_event("player_launch_ball", mouse_input_event)
 	self._checkbox_playing_mouse.pressed = value
-
-
-
 
 func load_input():
 	"""
@@ -46,12 +51,6 @@ func load_input():
 	for action_name in InputMap.get_actions():
 		if action_name in self._list_actions_game:
 			list_keys = InputMap.get_action_list(action_name)
-			
-#			if action_name == "player_launch_ball":
-#				for e in list_keys:
-#					if "inputeventmousebutton" in str(e).to_lower():
-#						print_debug(list_keys)
-			
 			self._dict_action_keys[action_name] = list_keys
 
 
@@ -101,22 +100,6 @@ func set_upper_characters(string:String):
 		last_character = c
 	
 	return new_string
-
-
-#func set_first_character_to_upper(string:String):
-#	var new_string=""; var i = 0
-#	var does_character_was_foundt = false
-#	for c in string:
-#		if i == 0:
-#			new_string += str(c).to_upper()
-#		elif not does_character_was_foundt and not self.is_character_numeric(c):
-#			does_character_was_foundt = true
-#			new_string += str(c).to_upper()
-#		else:
-#			new_string += str(c).to_lower()
-#
-#		i += 1
-#	return new_string
 
 
 func set_first_character_to_upper(string:String):
@@ -176,29 +159,50 @@ func _btn_pressed(btn_text:String):
 		self._ui_key_binding.last_key_action = action_name
 		self._ui_key_binding.set_label_title(btn_text)
 
+func get_action_where_key_used(new_key_text:String, action_name_ignore:String):
+	if action_name_ignore == "":return ""
+	for action_name in self._dict_action_keys:
+		print("-test pour l'action suivante:'",action_name,"' rappel:", action_name_ignore)
+		for key in self._dict_action_keys[action_name]:
+			if new_key_text == key.as_text() && action_name_ignore != action_name:
+				print("--Une action à été trouvé:", action_name)
+				return action_name
+	
+	return ""
 
 func new_key_valided():
 	"""
 		Called for updating the new key
 	"""
-	var input_event_key_object = InputEventKey.new()
+	var input_event_new_key = InputEventKey.new()
 	var action_name = self._ui_key_binding.last_key_action
 	var last_key_scancode = self._ui_key_binding.last_key_scancode
 	var new_key_text = self.get_text_by_scancode(self._ui_key_binding.new_key_scancode)
-	input_event_key_object.scancode = last_key_scancode
-	InputMap.action_erase_event(action_name,
-								input_event_key_object)
-	input_event_key_object.scancode = self._ui_key_binding.new_key_scancode
-	InputMap.action_add_event(action_name, input_event_key_object)
+	input_event_new_key.scancode = self._ui_key_binding.new_key_scancode
+	
+	var input_event_last_key = InputEventKey.new()
+	input_event_last_key.scancode = last_key_scancode
+	
+	self.set_key_to_action(action_name, input_event_last_key, input_event_new_key)
+	
+	var action_duplicate_key = self.get_action_where_key_used(input_event_new_key.as_text(), action_name)
+	
+	if action_duplicate_key != "" && action_name != action_duplicate_key: #key was already used at this action
+		self.set_key_to_action(action_duplicate_key, input_event_new_key, input_event_last_key)
+	
 	self.set_button_key_text(self.get_btn_object_by_his_text(
 									self.get_text_by_scancode(last_key_scancode)),
 							new_key_text)
-	
 	
 	self.get_node("customize_keyboard").queue_free()
 	self._ui_key_binding = null
 	self.play_sound("accept")
 	self.get_tree().change_scene("res://ressources/scene/ui/ui_menu.tscn")
+
+#key mapping refresh
+func set_key_to_action(action_name, input_event_key_remove, input_event_new_key):
+	InputMap.action_erase_event(action_name, input_event_key_remove)
+	InputMap.action_add_event(action_name, input_event_new_key)
 
 
 func get_btn_object_by_his_text(btn_txt:String):
@@ -216,6 +220,7 @@ func set_button_key_text(btn_obj, new_text:String):
 
 
 func _on_btn_play_pressed():
+	self.get_node("btn_play").visible = false
 	self.play_sound("accept")
 	yield(self.get_node("audiostreamplayer_effect"), "finished")
 	self.get_tree().change_scene("res://ressources/scene/gameplay/game.tscn")
@@ -233,7 +238,8 @@ func _on_checkbox_play_with_mouse_pressed():
 	var can_play_with_mouse = self.get_node("checkbox_play_with_mouse").pressed
 	if can_play_with_mouse:
 		self.play_sound("accept")
+		
 	else:
 		self.play_sound("wrong")
 	
-	self.set_mouse_play(can_play_with_mouse)
+	self.set_can_mouse_play(can_play_with_mouse)

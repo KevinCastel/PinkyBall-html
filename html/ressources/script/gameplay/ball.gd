@@ -10,9 +10,9 @@ var _dict_sound = {}
 
 var _speed = 1.0
 
-var _accel = 0.000001#0.0000001
+var _accel = 0.00001#0.0000001
 
-const MAXIMUM_SPEED = 2.50 #1
+const MAXIMUM_SPEED = 1.80 #1
 
 onready var _game_node = self.find_parent("game")
 
@@ -24,7 +24,7 @@ func spawn(global_pos):
 
 
 func _physics_process(_delta):
-	if self.get_parent()._pause:return
+	if self._game_node._pause:return
 	if self._is_paused:return
 	
 	self.play_sound()
@@ -38,7 +38,7 @@ func _physics_process(_delta):
 		
 		if "brick" in collider_object.name:
 			collider_object.on_impact()
-			self._accel += 0.000000020
+			self._accel += 0.000000015
 		elif "wall" in collider_object.name:
 			self._game_node.add_sound_audiostreamplayer2D("wall_impact",
 																	1.0,
@@ -108,14 +108,36 @@ func reset_speed():
 	self._vel = Vector2.ZERO
 
 
+func get_decimal_number_for_speed(multiplication_value):
+	var speed_int = int(self._speed * multiplication_value)
+	var unit = int(speed_int - multiplication_value)
+	
+	return unit
+ 
+func get_breaking_value():
+	"""Called for getting the new value of breakin"""
+	var first_decimal = self.get_decimal_number_for_speed(1000)
+	#Implement for the rest of theses value incrementing an 0*10 until 1000
+	var second_decimal = int(self._speed*100)
+	var third_decimal = self._speed/1000
+	var fourth_decimal = fmod(self._speed,100)
+	
+	print("speed :", self._speed)
+	print("first_decimal:", first_decimal)
+	print("second_decimal:", second_decimal)
+	print("third_decimal:", third_decimal)
+	print("fourth_decimal:", fourth_decimal)
+
+
 func sub_speed(coll_name:String="others"):
 	"""
 		Called when this object had collided with something and
 		the collision slow down the speed of this object
 	"""
 	if "brick" in coll_name:
-		if self._speed > 0.01:
-			self._speed -= 0.0001
+		self.get_breaking_value()
+		self._speed = max(0.09000010, self._speed-0.0070) #should use third value after comma for division
+		
 	
 	elif "wall" in coll_name:
 		if self._speed > 1.50:
@@ -143,3 +165,5 @@ func sub_speed(coll_name:String="others"):
 			self._vel.y -= 0.0015
 		elif self._vel.y < -0.30:
 			self._vel.y += 0.0015
+	
+#	self._speed = max(self._speed, 0.9989)

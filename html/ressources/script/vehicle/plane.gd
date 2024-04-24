@@ -43,12 +43,12 @@ var _cam_object
 
 var _block_pos = false
 
-onready var _parent = self.get_parent().get_parent()
+onready var _game = self.get_parent().get_parent()
 
 
 func _physics_process(delta):
-	self.sleeping = self._parent._pause
-	if self._parent._pause:return
+	self.sleeping = self._game._pause
+	if self._game._pause:return
 	
 	self.play_sound()
 	self.play_motor_sound()
@@ -60,6 +60,7 @@ func _physics_process(delta):
 		and self._is_character_in_plane:
 		self._is_character_in_plane = false
 		self.spawn_player_character()
+		self._game.set_mobile_btn_visibility("get-out", false)
 		self.remove_cam("character")
 		
 	elif self._count_explosion == 0:
@@ -80,10 +81,11 @@ func _physics_process(delta):
 		self._delay_explosion = 0
 		self._count_explosion += 1
 		self.set_explosion_colour(40)
-		self._parent.manage_explosion(self.global_position,
+		self._game.manage_explosion(self.global_position,
 										"plane",
 										self._dict_explosion_size["running"])
 	elif self._is_character_in_plane:
+		self._game.set_mobile_btn_visibility("get-out", false)
 		self.remove_cam("platform")
 		self.queue_free()
 	elif self._can_be_destroyed:
@@ -105,12 +107,12 @@ func spawn_player_character():
 	var player_character_inst = preload(
 		"res://ressources/scene/character/character.tscn").instance()
 	
-	self._parent.get_node("character").add_child(player_character_inst)
+	self._game.get_node("character").add_child(player_character_inst)
 	
 	player_character_inst.spawn(self.global_position,
 								"pink",
-								self._parent._player_name)
-	self._parent.set_gameplay_mode("character")
+								self._game._player_name)
+	self._game.set_gameplay_mode("character")
 
 
 func check_speed():pass
@@ -174,6 +176,8 @@ func spawn(global_pos, ammo=4):
 			ammo (int) is the number of ammo in the plane that the player can shoot
 		
 	"""
+	self._game.set_mobile_btn_visibility("get-out", true)
+	self._game.set_mobile_btn_visibility("shoot", true)
 	self.global_position = global_pos
 	self.global_position.y -= 10
 	
@@ -200,10 +204,10 @@ func create_cam():
 	
 	self._cam_object.current = true
 	
-	self._parent.init_cam(self._cam_object)
+	self._game.init_cam(self._cam_object)
 	
-	self._parent.manage_camera("plane", self._cam_object)
-	self._parent.set_gameplay_mode("plane", self)
+	self._game.manage_camera("plane", self._cam_object)
+	self._game.set_gameplay_mode("plane", self)
 
 
 func destroy():
@@ -212,7 +216,7 @@ func destroy():
 		self._have_explosed_for_the_first_time = true
 		self._life = 0
 		self.set_explosion_colour(20)
-		self._parent.manage_explosion(self.global_position,
+		self._game.manage_explosion(self.global_position,
 										"plane",
 										self._dict_explosion_size["first"])
 
@@ -310,7 +314,8 @@ func play_sound():
 	var first_key
 	
 	if len(self._dict_sound) > 0:
-		first_key = self.find_parent("game").get_first_key_from_dict(self._dict_sound)
+#		first_key = self.find_("game").get_first_key_from_dict(self._dict_sound)
+		first_key = self._dict_sound.keys()[0]
 		
 		if not self._dict_sound[first_key].is_playing():
 			self.get_node("sound/"+first_key).queue_free()
@@ -327,17 +332,17 @@ func play_motor_sound():
 	var audio_stream_sampler_object = audiostream2D_run_object.stream
 	
 	if not self.get_if_stream_audio_is_pixelated(audio_stream_sampler_object) and\
-		self._parent._gameplay_mode == "character":
+		self._game._gameplay_mode == "character":
 		audiostream2D_run_object.stream = self.set_stream_format(
 							audiostream2D_run_object.stream,
 							true)
 	elif self.get_if_stream_audio_is_pixelated(audio_stream_sampler_object) and\
-		self._parent._gameplay_mode != "character":
+		self._game._gameplay_mode != "character":
 		audiostream2D_run_object.stream = self.set_stream_format(
 							audiostream2D_run_object.stream,
 							false)
 	
-	if self._parent._gameplay_mode == "character":
+	if self._game._gameplay_mode == "character":
 		if self._count_explosion == 0:
 			audiostream2D_run_object.volume_db = -30
 		else:
@@ -411,13 +416,13 @@ func remove_cam(new_type:String):
 			new_type:str
 	"""
 	if new_type == "platform":
-		self._parent.manage_camera("gameplay")
+		self._game.manage_camera("gameplay")
 	else:
 		if self._cam_object:
 			self._cam_object.current = false
 			self._cam_object.queue_free()
 			self._cam_object = null
-	self._parent.set_gameplay_mode(new_type)
+	self._game.set_gameplay_mode(new_type)
 
 
 func _on_plane_body_entered(_body):
@@ -438,7 +443,7 @@ func take_damage():
 	self.add_sound("plane_impact", 1.0+(self._speed/10), -10+(damage*2))
 	
 	if self._life <= 0:
-		self._parent.manage_explosion(self.global_position,
+		self._game.manage_explosion(self.global_position,
 										"plane",
 										self._dict_explosion_size["first"],
 										1.0+self._count_explosion/10,
@@ -473,7 +478,7 @@ func add_sound(sound_name:String, play_pitch=1.0, play_volume=1.0):
 		
 		audio_stream_sampler = self.set_stream_format(
 							audio_stream_sampler,
-							self._parent._gameplay_mode == "character")
+							self._game._gameplay_mode == "character")
 		
 		audiostream2D_object.stream = audio_stream_sampler
 	
@@ -492,9 +497,9 @@ func shoot():
 								self.linear_velocity.x,
 								self.linear_velocity.y)
 	self._ammo -= 1
-	self._parent.get_node("ammu").add_child(bullet)
+	self._game.get_node("ammu").add_child(bullet)
 	
-	self._parent.stats_object.add_ammo_fired("plane_m4")
+	self._game.stats_object.add_ammo_fired("plane_m4")
 	
 	self.add_sound("plane_shoot", 1.0+self._weapon_pitch)
 	self._weapon_pitch += 0.25

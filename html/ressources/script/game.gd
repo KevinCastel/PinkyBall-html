@@ -22,6 +22,8 @@ onready var tileset_brick = self.get_node("tilemap_bricks")
 
 onready var _cheatc_object = preload("res://ressources/script/cheat_code.gd").new()
 
+onready var _mobile_btns = self.get_node("CanvasLayer/ControlMobileBtn/NodeMobileBtn")
+
 var _force_player_position = false
 
 var _gameplay_mode = "platform"
@@ -74,6 +76,9 @@ var _jscript_object = JavaScript
 var _is_player_on_web_app = false
 
 func _ready():
+	self.set_btn_mobile_visibility("get_out", false)
+	self.set_btn_mobile_visibility("shoot", false)
+	self.set_btn_mobile_visibility("down", false)
 	if not OS.has_touchscreen_ui_hint() or OS.get_name().to_lower() in ["windows"]:
 		self.destroy_touchbtn()
 	
@@ -96,8 +101,6 @@ func _ready():
 	
 	self.set_gameplay_mode("platform")
 	self._player_object_platform.global_position.x = 500
-
-
 
 
 func _physics_process(_delta):
@@ -363,6 +366,7 @@ func get_map():
 
 func launch_ball(global_pos):
 	"""launch the ball"""
+	self.set_btn_mobile_visibility("up", false)
 	var ball_obj
 	if not self._ball_launched:
 		ball_obj = preload("res://ressources/scene/gameplay/ball.tscn").instance()
@@ -658,6 +662,7 @@ func check_map_bottom():
 			
 			self._player_object_platform.set_ball(false)
 			self.add_message("Survive "+str(self._player_life)+" time!")
+			self.set_btn_mobile_visibility("up", true)
 			
 	list_children_obj += self.get_node("character").get_children()
 	list_children_obj += self.get_node("ammu").get_children()
@@ -1028,3 +1033,21 @@ func get_if_application_is_html5():
 		Check if the player is on mobile or laptop
 	"""
 	self._is_player_on_web_app = (OS.get_naem() == "HTML5")
+
+
+func set_btn_mobile_visibility(touchscreenbutton_name:String, visible):
+	var mobile_btn = self.get_node("CanvasLayer/ControlMobileBtn/NodeMobileBtn/touchscreenbutton_"+touchscreenbutton_name)
+	
+	match visible:
+		true:
+			mobile_btn.modulate.a = 1.0
+		false:
+			mobile_btn.modulate.a = 0.3
+
+
+func _on_Area2DMobileBtns_body_entered(body):
+	self._mobile_btns.modulate.a = 130
+
+
+func _on_Area2DMobileBtns_body_exited(body):
+	self._mobile_btns.modulate.a = 255

@@ -32,7 +32,7 @@ var _is_rocket_rc_in_inventory = false
 
 var _dict_sound = {}
 
-onready var _parent = self.get_parent()
+onready var _game = self.get_parent()
 
 var _dict_index_weapon = {
 	0:null,
@@ -49,8 +49,8 @@ var _dict_buttoms_dynamic := {}
 
 func _physics_process(delta):
 	"""Main runtime"""
-	if self._parent._pause:return
-	if not self._parent._is_game_playing: return
+	if self._game._pause:return
+	if not self._game._is_game_playing: return
 	
 	self.check_area2D_spawn()
 	self.check_position()
@@ -59,12 +59,12 @@ func _physics_process(delta):
 	if self._weapon != "":
 		if self._chrono_shoot < self._max_chrono_shoot:
 			self._chrono_shoot += 1
-		elif self._weapon_data[self._weapon] > 0 and self._parent._gameplay_mode == "platform":
+		elif self._weapon_data[self._weapon] > 0 and self._game._gameplay_mode == "platform":
 			self.shoot()
 	
 	if not self.global_position.y != 844: self.global_position.y = 844
 	
-	if self._parent._gameplay_mode == "platform":self.check_input(delta)
+	if self._game._gameplay_mode == "platform":self.check_input(delta)
 	
 	self._vel = Vector2(self._speed, 0)
 	
@@ -111,7 +111,7 @@ func set_acceleration():
 	self._bonus_speed = lerp(self._bonus_speed, 0.0000, 0.0004)
 	if self._bonus_speed > 0.0010 and self._bonus_speed < 0.0012:
 		self._bonus_speed = 0
-		self._parent.add_message("Terminus")
+		self._game.add_message("Terminus")
 
 func get_acceleration():
 	"""get the acceleration value"""
@@ -127,41 +127,41 @@ func item_won():
 	if self._raycast_item.is_colliding():
 		colliding_object = self._raycast_item.get_collider()
 		if "coffee" in colliding_object.name:
-			self._parent.stats_object.add_item_used("coffee")
+			self._game.stats_object.add_item_used("coffee")
 			self._bonus_speed = 150
-			self._parent.add_message("Slow Down! Slow Down!")
+			self._game.add_message("Slow Down! Slow Down!")
 		elif "alcohol" in colliding_object.name:
-			self._parent.stats_object.add_item_used("alcohol")
+			self._game.stats_object.add_item_used("alcohol")
 			self._negatif_speed = 20
-			self._parent.add_message("Yu know you're drunk!")
+			self._game.add_message("Yu know you're drunk!")
 		elif "bullet" in colliding_object.name:
-			self._parent.stats_object.add_item_used("bullet")
-			self._parent.set_if_ball_object_can_be_destroyed(false)
+			self._game.stats_object.add_item_used("bullet")
+			self._game.set_if_ball_object_can_be_destroyed(false)
 			self._weapon_data["bullet"] += 10
 			self.set_weapon("bullet")
 			self.launch_ball()
-			self._parent.add_message("What a rampage!")
+			self._game.add_message("What a rampage!")
 		elif "rocket" in colliding_object.name:
-			self._parent.stats_object.add_item_used("rocket")
-			self._parent.set_if_ball_object_can_be_destroyed(false)
+			self._game.stats_object.add_item_used("rocket")
+			self._game.set_if_ball_object_can_be_destroyed(false)
 			self.launch_ball()
 			colliding_object.set_layer_collision_()
 			self._weapon_data["rocket"] += 1
 			if not self._is_rocket_rc_in_inventory:
 				self._is_rocket_rc_in_inventory = colliding_object._is_rc
 			self.set_weapon("rocket")
-			self._parent.add_message("So the rampage have to explose!") #Que le carnage explose
+			self._game.add_message("So the rampage have to explose!") #Que le carnage explose
 		elif "heart" in colliding_object.name:
-			self._parent.stats_object.add_item_used("heart")
-			self._parent._player_life = colliding_object.get_life()
-			self._parent.add_message("Alive when it should be dead!")
+			self._game.stats_object.add_item_used("heart")
+			self._game._player_life = colliding_object.get_life()
+			self._game.add_message("Alive when it should be dead!")
 		elif "rc" in colliding_object.name:
-			self._parent.stats_object.add_item_used("rc_plane")
+			self._game.stats_object.add_item_used("rc_plane")
 			self._is_rocket_rc_in_inventory = true
-			self._parent.add_message("Missile are RC now!")
+			self._game.add_message("Missile are RC now!")
 		if self.check_if_can_destroy_the_item(colliding_object.name):
 			colliding_object.destroy()
-			self._parent.add_message("Ahah! Nothing to win")
+			self._game.add_message("Ahah! Nothing to win")
 
 func check_weapon_mun():
 	"""
@@ -175,21 +175,22 @@ func check_weapon_mun():
 		if self._weapon_data["rocket"] == 0 and self._weapon_data["bullet"] > 0:
 			self._weapon = "bullet"
 		elif self._weapon_data["rocket"] == 0 and self._weapon_data["bullet"] == 0:
-			self._parent.set_if_ball_object_can_be_destroyed(true)
+			self._game.set_if_ball_object_can_be_destroyed(true)
 			self._weapon = ""
+			self._game.set_btn_mobile_visibility("shoot",false)
 	elif self._weapon == "bullet":
 		if self._weapon_data["bullet"] == 0 and self._weapon_data["rocket"] > 0:
 			self._weapon = "rocket"
 		elif self._weapon_data["bullet"] == 0 and self._weapon_data["rocket"] == 0:
-			self._parent.set_if_ball_object_can_be_destroyed(true)
+			self._game.set_btn_mobile_visibility("shoot",false)
 			self._weapon = ""
-			#self.set_if_ball_can_be_destroyed(true)
 
 func set_weapon(weapon):
 	"""set weapon"""
+	self._game.set_btn_mobile_visibility("shoot", true)
 	match weapon:
 		"bullet":
-			self._parent.set_if_ball_object_can_be_destroyed(false)
+			self._game.set_if_ball_object_can_be_destroyed(false)
 			if self._weapon != "":
 				self._dict_index_weapon[1] = weapon
 				self._weapon_data[weapon] += 5
@@ -197,7 +198,7 @@ func set_weapon(weapon):
 				self._weapon = weapon
 				self._dict_index_weapon[0] = weapon
 		"rocket":
-			self._parent.set_if_ball_object_can_be_destroyed(false)
+			self._game.set_if_ball_object_can_be_destroyed(false)
 			if self._weapon != "":
 				self._dict_index_weapon[1] = weapon
 				self._weapon_data[weapon] += 5
@@ -227,10 +228,10 @@ func check_input(_delta):
 			self._speed = lerp(self._speed, 0.00, 0.10*(self._bonus_speed/100))
 	
 	if Input.is_action_just_pressed("player_launch_ball") and\
-		 self._parent._gameplay_mode == "platform":
-		if not self._parent._ball_launched:
+		 self._game._gameplay_mode == "platform":
+		if not self._game._ball_launched:
 			self.launch_ball()
-		elif self._weapon != "" and self._parent._gameplay_mode == "platform" and\
+		elif self._weapon != "" and self._game._gameplay_mode == "platform" and\
 			self._can_launch_item:
 			if self._weapon_data[self._weapon] > 0:
 				self._weapon_data[self._weapon] -=1
@@ -238,7 +239,7 @@ func check_input(_delta):
 
 func launch_ball():
 	self.set_ball(true)
-	self._parent.launch_ball(self.get_node("position2D_ball").global_position)
+	self._game.launch_ball(self.get_node("position2D_ball").global_position)
 
 func shoot():
 	"""shoot"""
@@ -250,17 +251,17 @@ func shoot():
 	var weap_object = dict_weapon_object[self._weapon].instance()
 	var spawn_pos = self.get_node("position2D_ball").global_position
 	
-	self._parent.get_node("ammu").add_child(weap_object)
+	self._game.get_node("ammu").add_child(weap_object)
 	if self._weapon == "bullet":
 		weap_object.spawn(spawn_pos)
-		self._parent.add_message("Still "+str(self._weapon_data["bullet"])+" ammos")
-		self._parent.stats_object.add_ammo_fired(self._weapon)
+		self._game.add_message("Still "+str(self._weapon_data["bullet"])+" ammos")
+		self._game.stats_object.add_ammo_fired(self._weapon)
 	else:
 		weap_object.spawn(spawn_pos, self._is_rocket_rc_in_inventory)
-		self._parent.add_message("Still" + str(self._weapon_data["rocket"])+" rocket")
-		self._parent.stats_object.add_ammo_fired(self._weapon)
+		self._game.add_message("Still" + str(self._weapon_data["rocket"])+" rocket")
+		self._game.stats_object.add_ammo_fired(self._weapon)
 	
-	self._parent.add_sound_to_audiostreamplayer("bullet", 1.0+self._chrono_shoot, 1.0+self._chrono_shoot)
+	self._game.add_sound_to_audiostreamplayer("bullet", 1.0+self._chrono_shoot, 1.0+self._chrono_shoot)
 	self.launch_ball()
 
 func set_ammo_for_weapon(weapon_name, ammo, is_rocket_rc = false, force_inventory=false):
@@ -334,5 +335,5 @@ func play_sound():
 
 func on_collision_bottom():
 	"""Called when this object is colliding with the bottom of the map"""
-	self._parent.add_sound_to_audiostreamplayer("character_die_8bits")
+	self._game.add_sound_to_audiostreamplayer("character_die_8bits")
 	self.queue_free()
